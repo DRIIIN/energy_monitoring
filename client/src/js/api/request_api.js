@@ -100,6 +100,27 @@ class RequestAPI {
             body: JSON.stringify(data)
         });
     }
+
+    // Метод PUT
+    static async put(endpoint, data = {}) {
+        return this.request(endpoint, {
+            method: 'PUT',
+            body: JSON.stringify(data)
+        });
+    }
+    
+    // Метод DELETE
+    static async delete(endpoint, data = {}) {
+        const options = {
+            method: 'DELETE'
+        };
+        
+        if (data && Object.keys(data).length > 0) {
+            options.body = JSON.stringify(data);
+        }
+        
+        return this.request(endpoint, options);
+    }
 }
 
 window.RequestAPI = RequestAPI;

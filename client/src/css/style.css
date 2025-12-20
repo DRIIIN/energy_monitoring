@@ -206,8 +206,6 @@ a:hover {
 .cursor-pointer { cursor: pointer; }
 .user-select-none { user-select: none; }
 
-.mt-3 { margin-top: 1rem; }
-
 /* ===== КНОПКИ ===== */
 .btn {
     display: inline-flex;
@@ -400,61 +398,6 @@ select.form-control {
     position: relative;
 }
 
-/* .toggle-password {
-    position: absolute;
-    right: 0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: var(--gray-500);
-    cursor: pointer;
-}
-
-.toggle-password:hover {
-    color: var(--gray-700);
-} */
-
-/* .password-strength {
-    margin-top: var(--spacing-sm);
-} */
-
-/* .strength-bar {
-    height: 4px;
-    background-color: var(--gray-300);
-    border-radius: 2px;
-    overflow: hidden;
-}
-
-.strength-bar::before {
-    content: '';
-    display: block;
-    height: 100%;
-    width: 0;
-    background-color: var(--danger-color);
-    transition: width var(--transition);
-} */
-
-/* .password-strength.weak .strength-bar::before {
-    width: 25%;
-    background-color: var(--danger-color);
-}
-
-.password-strength.fair .strength-bar::before {
-    width: 50%;
-    background-color: var(--warning-color);
-}
-
-.password-strength.good .strength-bar::before {
-    width: 75%;
-    background-color: var(--info-color);
-}
-
-.password-strength.strong .strength-bar::before {
-    width: 100%;
-    background-color: var(--success-color);
-} */
-
 .strength-text {
     font-size: var(--font-size-xs);
     color: var(--gray-600);
@@ -536,7 +479,7 @@ select.form-control {
 /* ===== КАРТОЧКИ ===== */
 .card {
     position: relative;
-    display: flex;
+    display: none;
     flex-direction: column;
     min-width: 0;
     background-color: white;
@@ -554,6 +497,10 @@ select.form-control {
 .card-body {
     flex: 1 1 auto;
     padding: var(--spacing-lg);
+}
+
+.card.show {
+    display: flex;
 }
 
 /* ===== СПИННЕР И ЗАГРУЗОЧНЫЕ ИНДИКАТОРЫ ===== */
@@ -711,18 +658,6 @@ select.form-control {
     font-size: var(--font-size-sm);
 }
 
-/* .login-info {
-    margin-top: var(--spacing-lg);
-    padding: var(--spacing);
-    background-color: var(--gray-100);
-    border-radius: var(--border-radius);
-    font-size: var(--font-size-sm);
-}
-
-.login-info p {
-    margin-bottom: var(--spacing-xs);
-} */
-
 .login-footer {
     padding: var(--spacing);
     border-top: 1px solid var(--gray-300);
@@ -735,17 +670,6 @@ select.form-control {
     font-weight: 600;
     color: var(--primary-color);
 }
-
-/* .copyright {
-    margin: var(--spacing-xs) 0;
-} */
-
-/* .system-info {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--spacing-xs);
-    margin-top: var(--spacing-sm);
-} */
 
 .form-info {
     margin: var(--spacing) 0;
@@ -889,6 +813,7 @@ select.form-control {
     transition: background-color var(--transition-fast);
     color: var(--gray-700);
     text-decoration: none;
+    font-size: var(--font-size-base)
 }
 
 .menu-item:hover {
@@ -922,20 +847,7 @@ select.form-control {
     overflow-y: auto;
 }
 
-.page-header {
-    margin-bottom: var(--spacing-xl);
-}
-
-.page-header h1 {
-    margin-bottom: 0.5rem;
-}
-
-.page-header p {
-    color: var(--gray-600);
-    margin-bottom: var(--spacing);
-}
-
-.welcome-message {
+.user-card {
     max-width: 800px;
     margin: 0 auto;
 }

@@ -29,8 +29,13 @@ public class Config {
         defaultProperties.setProperty(ConfigKeys.JsonWebToken.SECRET,           "super-secret-key-:)");
         defaultProperties.setProperty(ConfigKeys.JsonWebToken.EXPIRATION_HOURS, "24");
         defaultProperties.setProperty(ConfigKeys.JsonWebToken.ISSUER,           "energy-monitoring-system");
+
+        defaultProperties.setProperty(ConfigKeys.PasswordHasher.ITERATIONS,     "65536");
+        defaultProperties.setProperty(ConfigKeys.PasswordHasher.KEY_LENGTH,     "256");
+        defaultProperties.setProperty(ConfigKeys.PasswordHasher.ALGORITHM,      "PBKDF2WithHmacSHA256");
+        defaultProperties.setProperty(ConfigKeys.PasswordHasher.SALT_LENGTH,    "16");
     }
-    
+
     // Загрузка значений из конфигурационного файла configFile
     public static void load(String configFile) {
         try (InputStream input = new FileInputStream(configFile)) {

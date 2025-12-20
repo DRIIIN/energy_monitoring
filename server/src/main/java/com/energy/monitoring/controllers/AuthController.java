@@ -196,16 +196,10 @@ public class AuthController {
                     endIndex = json.indexOf("}", startIndex);
                 }
 
-                String extraction = json.substring(startIndex, endIndex);
-                logger.info("Successful extraction from JSON: {} = {}", key, extraction);
-
                 return json.substring(startIndex, endIndex).trim();
             }
 
-            String extraction = json.substring(startIndex, endIndex);
-            logger.info("Successful extraction from JSON: {} = {}", key, extraction);
-
-            return extraction;
+            return json.substring(startIndex, endIndex);
         } catch (Exception e) {
             logger.error("Error in extracten key: {}", e.getMessage());
             return null;

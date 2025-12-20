@@ -8,6 +8,7 @@ import java.sql.Statement;
 
 import com.energy.monitoring.database.JDBC;
 import com.energy.monitoring.models.User;
+import com.energy.monitoring.utils.PasswordHasher;
 
 public class UserDAO {
 
@@ -18,7 +19,7 @@ public class UserDAO {
             PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
             stmt.setString(1, login);
-            stmt.setString(2, password);
+            stmt.setString(2, PasswordHasher.hashPassword(password));
             stmt.setInt(3, 0);
             
             int affectedRows = stmt.executeUpdate();
@@ -42,22 +43,24 @@ public class UserDAO {
     }
     
     public User authenticate(String login, String password) throws SQLException {
-        String sql = "SELECT * FROM users WHERE login = ? AND password = ?";
+        String sql = "SELECT * FROM users WHERE login = ?";
         
-        try (Connection connection = com.energy.monitoring.database.JDBC.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (Connection connection = JDBC.getConnection();
+            PreparedStatement stmt = connection.prepareStatement(sql)) {
             
             stmt.setString(1, login);
-            stmt.setString(2, password);
             
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return new User(
-                        rs.getInt("id"),
-                        rs.getString("login"),
-                        rs.getString("password"),
-                        rs.getInt("is_active")
-                    );
+                    String storedHash = rs.getString("password");
+                    if (PasswordHasher.verifyPassword(password, storedHash)) {
+                        return new User(
+                            rs.getInt("id"),
+                            rs.getString("login"),
+                            storedHash,
+                            rs.getInt("is_active")
+                        );
+                    }
                 }
             }
         }

@@ -23,7 +23,7 @@ USE `energy_monitoring_database` ;
 CREATE TABLE IF NOT EXISTS `energy_monitoring_database`.`users` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `login` VARCHAR(127) NOT NULL,
-  `password` VARCHAR(127) NOT NULL,
+  `password` VARCHAR(256) NOT NULL,
   `is_active` TINYINT(1) ZEROFILL UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;

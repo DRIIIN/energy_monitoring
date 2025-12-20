@@ -1,6 +1,5 @@
 package com.energy.monitoring.config;
 
-
 /* Ключи конфигурационных параметров */
 public class ConfigKeys {
     
@@ -23,4 +22,10 @@ public class ConfigKeys {
         public static final String ISSUER           = "jwt.issuer";
     }
     
+    public class PasswordHasher {
+        public static final String ITERATIONS  = "password.hasher.iterations";
+        public static final String KEY_LENGTH  = "password.hasher.key_length";
+        public static final String ALGORITHM   = "password.hasher.algorithm";
+        public static final String SALT_LENGTH = "password.hasher.salt_length";
+    }
 }
