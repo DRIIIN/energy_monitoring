@@ -6,21 +6,23 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.energy.monitoring.components.DataBaseFildNames;
+import com.energy.monitoring.components.SqlRequests;
 import com.energy.monitoring.database.JDBC;
 import com.energy.monitoring.models.User;
 import com.energy.monitoring.utils.PasswordHasher;
 
+/* Методы для взаимодействия с тааблицей пользователей */
 public class UserDAO {
-
     public User createUser(String login, String password) throws SQLException {
-        String sql = "INSERT INTO users (login, password, is_active) VALUES (?, ?, ?)";
+        String sql = SqlRequests.User.CREATE_USER;
         
-        try (Connection connection =  JDBC.getConnection();
-            PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection connection  = JDBC.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
             stmt.setString(1, login);
             stmt.setString(2, PasswordHasher.hashPassword(password));
-            stmt.setInt(3, 0);
+            stmt.setInt   (3, 0);
             
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
@@ -43,7 +45,7 @@ public class UserDAO {
     }
     
     public User authenticate(String login, String password) throws SQLException {
-        String sql = "SELECT * FROM users WHERE login = ?";
+        String sql = SqlRequests.User.AUTENTIFICATE;
         
         try (Connection connection = JDBC.getConnection();
             PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -52,13 +54,13 @@ public class UserDAO {
             
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    String storedHash = rs.getString("password");
+                    String storedHash = rs.getString(DataBaseFildNames.Tables.User.PASSWORD);
                     if (PasswordHasher.verifyPassword(password, storedHash)) {
                         return new User(
-                            rs.getInt("id"),
-                            rs.getString("login"),
+                            rs.getInt   (DataBaseFildNames.Tables.User.ID),
+                            rs.getString(DataBaseFildNames.Tables.User.LOGIN),
                             storedHash,
-                            rs.getInt("is_active")
+                            rs.getInt   (DataBaseFildNames.Tables.User.IS_ACTIVE)
                         );
                     }
                 }
@@ -68,9 +70,9 @@ public class UserDAO {
     }
     
     public boolean userExists(String login) throws SQLException {
-        String sql = "SELECT COUNT(*) as count FROM users WHERE login = ?";
+        String sql = SqlRequests.User.USER_EXISTS;
         
-        try (Connection connection = com.energy.monitoring.database.JDBC.getConnection();
+        try (Connection connection  = JDBC.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
             
             stmt.setString(1, login);
@@ -85,9 +87,9 @@ public class UserDAO {
     }
     
     public void activateUser(int userId) throws SQLException {
-        String sql = "UPDATE users SET is_active = 1 WHERE id = ?";
+        String sql = SqlRequests.User.ACTIVATE_USER;
         
-        try (Connection connection = com.energy.monitoring.database.JDBC.getConnection();
+        try (Connection connection  = JDBC.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
             
             stmt.setInt(1, userId);
@@ -96,9 +98,9 @@ public class UserDAO {
     }
     
     public void deactivateUser(int userId) throws SQLException {
-        String sql = "UPDATE users SET is_active = 0 WHERE id = ?";
+        String sql = SqlRequests.User.DEACTIVATE_USER;
         
-        try (Connection connection = com.energy.monitoring.database.JDBC.getConnection();
+        try (Connection connection  = JDBC.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
             
             stmt.setInt(1, userId);

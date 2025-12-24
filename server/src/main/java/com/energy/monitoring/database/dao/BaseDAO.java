@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.energy.monitoring.database.JDBC;
 
+/* Методы установки соединения с базой данных */
 public abstract class BaseDAO {
     private static final Logger logger = LoggerFactory.getLogger(BaseDAO.class); // Объект Logger для текущего класса
 

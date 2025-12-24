@@ -1,4 +1,4 @@
-package com.energy.monitoring.handlers;
+package com.energy.monitoring.models;
 
 import java.nio.charset.StandardCharsets;
 

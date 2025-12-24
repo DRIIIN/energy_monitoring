@@ -14,12 +14,12 @@ import com.energy.monitoring.components.HttpConstructions.Methods;
 import com.energy.monitoring.components.HttpStatusCodes;
 import com.energy.monitoring.components.JsonResponses;
 import com.energy.monitoring.database.dao.UserDAO;
-import com.energy.monitoring.handlers.HttpRequest;
-import com.energy.monitoring.handlers.HttpResponse;
+import com.energy.monitoring.models.HttpRequest;
+import com.energy.monitoring.models.HttpResponse;
 import com.energy.monitoring.models.User;
 import com.energy.monitoring.utils.JwtUtil;
 
-/* Обработчик конфигурационных запросов */
+/* Клаасс метадов обработки запросов аунтификации */
 public class AuthController {
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class); // Объект Logger для текущего класса
     
@@ -56,8 +56,8 @@ public class AuthController {
             String body = request.getBody();
             
             if (body.contains(JsonBlocks.USERNAME) && body.contains(JsonBlocks.PASSWORD)) {
-                String username = extractFromJson(body, JsonBlocks.USERNAME);
-                String password = extractFromJson(body, JsonBlocks.PASSWORD);
+                String username = JsonResponses.extractFromJson(body, JsonBlocks.USERNAME);
+                String password = JsonResponses.extractFromJson(body, JsonBlocks.PASSWORD);
                 
                 if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
                     return HttpResponse.badRequest(JsonResponses.formingUniversalResponse(false, "Username or password are required"));
@@ -119,9 +119,9 @@ public class AuthController {
                 userDAO.deactivateUser(JwtUtil.getUserIdFromToken(token));
 
                 return HttpResponse.ok(JsonResponses.formingUniversalResponse(true , "Logged out successfully"), ContentTypes.JSON);
+            } else {
+                return HttpResponse.ok(JsonResponses.formingUniversalResponse(false, "Logged out not successfully"), ContentTypes.JSON);
             }
-            
-            return HttpResponse.ok(JsonResponses.formingUniversalResponse(false, "Logged out not successfully"), ContentTypes.JSON);
         } catch (SQLException e) {
             return HttpResponse.error(HttpStatusCodes.INTERNAL_SERVER_ERROR, JsonResponses.formingUniversalResponse(false, "Error loged out of user: ".concat(e.getMessage())));
         }
@@ -131,8 +131,8 @@ public class AuthController {
     private static HttpResponse handleRegister(HttpRequest request) {
         try {
             String body     = request.getBody();
-            String username = extractFromJson(body, JsonBlocks.USERNAME);
-            String password = extractFromJson(body, JsonBlocks.PASSWORD);
+            String username = JsonResponses.extractFromJson(body, JsonBlocks.USERNAME);
+            String password = JsonResponses.extractFromJson(body, JsonBlocks.PASSWORD);
 
             if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
                 return HttpResponse.badRequest(JsonResponses.formingUniversalResponse(false, "Username or password are required"));
@@ -170,39 +170,11 @@ public class AuthController {
                 String jsonResponse = JsonResponses.formingUserProfileSuccessResponse(JwtUtil.getUsernameFromToken(token), JwtUtil.getUserIdFromToken(token));
                 
                 return HttpResponse.ok(jsonResponse, ContentTypes.JSON);
+            } else {
+                return HttpResponse.unauthorized(JsonResponses.formingUniversalResponse(false, "Not authenticated"));
             }
-            
-            return HttpResponse.unauthorized(JsonResponses.formingUniversalResponse(false, "Not authenticated"));
         } catch (Exception e) {
             return HttpResponse.error(HttpStatusCodes.INTERNAL_SERVER_ERROR, JsonResponses.formingUniversalResponse(false, "Error getting profile: " + e.getMessage()));
-        }
-    }
-    
-    // Метод для извлечения значений из JSON
-    private static String extractFromJson(String json, String key) {
-        try {
-            int keyIndex = json.indexOf("\"" + key + "\":");
-            if (keyIndex == -1) {
-                logger.warn("Not find a key: {}", key);
-                return null;
-            }
-            
-            int startIndex = keyIndex + key.length() + 4;
-            int endIndex   = json.indexOf("\"", startIndex);
-            
-            if (endIndex == -1) {
-                endIndex = json.indexOf(",", startIndex);
-                if (endIndex == -1) {
-                    endIndex = json.indexOf("}", startIndex);
-                }
-
-                return json.substring(startIndex, endIndex).trim();
-            }
-
-            return json.substring(startIndex, endIndex);
-        } catch (Exception e) {
-            logger.error("Error in extracten key: {}", e.getMessage());
-            return null;
         }
     }
 }

@@ -11,13 +11,24 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.energy.monitoring.components.HttpConstructions.ContentTypes;
+import com.energy.monitoring.components.HttpConstructions.EndPoints;
+import com.energy.monitoring.components.HttpConstructions.JsonBlocks;
+import com.energy.monitoring.components.HttpConstructions.Methods;
 import com.energy.monitoring.components.HttpStatusCodes;
+import com.energy.monitoring.components.JsonResponses;
 import com.energy.monitoring.controllers.AuthController;
+import com.energy.monitoring.controllers.CoordinatorController;
+import com.energy.monitoring.models.HttpRequest;
+import com.energy.monitoring.models.HttpResponse;
 
+/* Главный класс обработки http-запросов */
 public class HttpHandler implements Runnable {
-    private static final Logger logger = Logger.getLogger(HttpHandler.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(HttpHandler.class); // Объект Logger для текущего класса
     
     private final Socket clientSocket;
     
@@ -34,11 +45,12 @@ public class HttpHandler implements Runnable {
             new OutputStreamWriter(output, StandardCharsets.UTF_8), true)) {
             
             String requestLine = reader.readLine();
-            if (requestLine == null) return;
+            if (requestLine == null) {
+                return;
+            }
             
-            logger.info("Request: ".concat(requestLine));
+            logger.info("Received HTTP-Request: {}", requestLine);
             
-            // Парсинг метода и пути
             String[] requestParts = requestLine.split(" ");
             if (requestParts.length < 2) {
                 sendError(writer, HttpStatusCodes.BAD_REQUEST, "Bad Request");
@@ -46,30 +58,29 @@ public class HttpHandler implements Runnable {
             }
             
             String method = requestParts[0];
-            String path = requestParts[1];
+            String path   = requestParts[1];
             
-            // Чтение заголовков
             Map<String, String> headers = new HashMap<>();
             String line;
             int contentLength = 0;
-            String origin = null;
+            String origin     = null;
             
             while ((line = reader.readLine()) != null && !line.isEmpty()) {
                 String[] headerParts = line.split(":", 2);
                 if (headerParts.length == 2) {
-                    String headerName = headerParts[0].trim().toLowerCase();
+                    String headerName  = headerParts[0].trim().toLowerCase();
                     String headerValue = headerParts[1].trim();
                     headers.put(headerName, headerValue);
                     
-                    if (headerName.equals("content-length")) {
+                    if (headerName.equals(JsonBlocks.CONTENT_LENGTH)) {
                         contentLength = Integer.parseInt(headerValue);
-                    } else if (headerName.equals("origin")) {
+                    } else
+                    if (headerName.equals(JsonBlocks.ORIG)) {
                         origin = headerValue;
                     }
                 }
             }
             
-            // Чтение тела запроса (если есть)
             String body = "";
             if (contentLength > 0) {
                 char[] bodyChars = new char[contentLength];
@@ -77,22 +88,18 @@ public class HttpHandler implements Runnable {
                 body = new String(bodyChars);
             }
             
-            // Создание объекта запроса
-            HttpRequest request = new HttpRequest(method, path, headers, body);
-            
-            // Маршрутизация запросов
+            HttpRequest request   = new HttpRequest(method, path, headers, body);
             HttpResponse response = routeRequest(request);
             
-            // Отправка ответа с правильными CORS заголовками
             sendResponse(writer, response, origin);
             
         } catch (IOException e) {
-            logger.warning("Error handling request".concat(" -> ").concat(String.valueOf(e)));
+            logger.error("Error handling request: {}", e.getMessage());
         } finally {
             try {
                 clientSocket.close();
             } catch (IOException e) {
-                logger.warning("Error closing socket".concat(" -> ").concat(String.valueOf(e)));
+                logger.error("Error closing socket: {}", e.getMessage());
             }
         }
     }
@@ -100,48 +107,42 @@ public class HttpHandler implements Runnable {
     private HttpResponse routeRequest(HttpRequest request) {
         String path   = request.getPath();
         String method = request.getMethod();
-        
-        // Обработка preflight OPTIONS запросов (CORS)
-        if (method.equals("OPTIONS")) {
-            return handleOptionsRequest(request);
-        }
-        
-        // Главная страница
-        if (method.equals("GET") && (path.equals("/") || path.equals("/index.html"))) {
-            return serveStaticFile("index.html");
-        }
-        
-        // Статические файлы из клиентской директории
-        if (method.equals("GET") && !path.startsWith("/api/")) {
+        if (method.equals(Methods.OPTIONS)) {
+            return handleOptionsRequest();
+        } else
+        if (method.equals(Methods.GET) && (path.equals(EndPoints.MAIN) || path.equals(EndPoints.MAIN_PAGE))) {
+            return serveStaticFile(EndPoints.MAIN_PAGE);
+        } else
+        if (method.equals(Methods.GET) && !path.startsWith(EndPoints.API)) {
             return serveStaticFile(path);
-        }
-        
-        // API маршруты
-        if (path.startsWith("/api/auth")) {
+        } else
+        if (path.startsWith(EndPoints.AUTH)) {
             return AuthController.handleRequest(request);
-        } else if (path.equals("/api/health")) {
+        } else 
+        if (path.equals(EndPoints.HEALTH)) {
             return handleHealthCheck();
+        } else 
+        if (path.startsWith(EndPoints.COORDINATORS)) {
+            return CoordinatorController.handleRequest(request);
+        } else {
+            return HttpResponse.notFound(JsonResponses.formingUniversalResponse(false, "Endpoint not found"));
         }
-        
-        return HttpResponse.notFound("{\"success\":false,\"message\":\"Endpoint not found\"}");
-    }
-    
-    private HttpResponse handleOptionsRequest(HttpRequest request) {
-        // CORS preflight response - возвращаем пустое тело
-        return new HttpResponse(HttpStatusCodes.OK, "OK", new byte[0], "text/plain");
     }
     
     private HttpResponse handleHealthCheck() {
-        String json = "{\"status\":\"ok\",\"timestamp\":\"" + System.currentTimeMillis() + "\"}";
-        return HttpResponse.ok(json, "application/json");
+        String json = JsonResponses.formingHealthCheckResponse(System.currentTimeMillis());
+        
+        return HttpResponse.ok(json, ContentTypes.JSON);
     }
     
+    private HttpResponse handleOptionsRequest() {
+        return new HttpResponse(HttpStatusCodes.OK, "OK", new byte[0], ContentTypes.PLAIN);
+    }
+
     private HttpResponse serveStaticFile(String path) {
-        if (path.equals("/")) path = "/index.html";
-        
         try {
-            String filePath = "client" + path;
-            File file = new File(filePath);
+            String filePath = JsonBlocks.CLIENT + path;
+            File file       = new File(filePath);
             
             if (!file.exists() || file.isDirectory()) {
                 return HttpResponse.notFound("File not found: " + path);
@@ -153,31 +154,45 @@ public class HttpHandler implements Runnable {
             return new HttpResponse(HttpStatusCodes.OK, "OK", content, contentType);
             
         } catch (IOException e) {
-            logger.warning("Error serving static file: ".concat(path).concat(" -> ").concat(String.valueOf(e)));
+            logger.error("Error serving static file {}: {}",path, e.getMessage());
             return HttpResponse.error(HttpStatusCodes.INTERNAL_SERVER_ERROR, "Internal server error");
         }
     }
     
     private String getContentType(String filePath) {
-        if      (filePath.endsWith(".html")) return "text/html; charset=utf-8";
-        else if (filePath.endsWith(".css"))  return "text/css; charset=utf-8";
-        else if (filePath.endsWith(".js"))   return "application/javascript; charset=utf-8";
-        else if (filePath.endsWith(".json")) return "application/json; charset=utf-8";
-        else if (filePath.endsWith(".png"))  return "image/png";
-        else if (filePath.endsWith(".jpg"))  return "image/jpeg";
-        else if (filePath.endsWith(".jpeg")) return "image/jpeg";
-        else if (filePath.endsWith(".ico"))  return "image/x-icon";
-        else                                 return "text/plain; charset=utf-8";
+        if (filePath.endsWith(".html")) {
+            return ContentTypes.HTML;
+        }else
+        if (filePath.endsWith(".css")) {
+            return ContentTypes.CSS;
+        } else
+        if (filePath.endsWith(".js")) {
+            return ContentTypes.JS;
+        } else 
+        if (filePath.endsWith(".json")) {
+            return ContentTypes.JSON;
+        }else 
+        if (filePath.endsWith(".png")) {
+            return ContentTypes.PNG;
+        }else 
+        if (filePath.endsWith(".jpg"))  {
+            return ContentTypes.JPEG;
+        }else 
+        if (filePath.endsWith(".jpeg")) {
+            return ContentTypes.JPEG;
+        }else 
+        if (filePath.endsWith(".ico")) {
+            return ContentTypes.ICO;
+        }else {
+            return ContentTypes.PLAIN;
+        }
     }
     
     private void sendResponse(PrintWriter writer, HttpResponse response, String origin) {
-        // Заголовки ответа
-        writer.printf("HTTP/1.1 %d %s\r\n", response.getStatusCode(), response.getStatusMessage());
-        writer.printf("Content-Type: %s\r\n", response.getContentType());
+        writer.printf("HTTP/1.1 %d %s\r\n",     response.getStatusCode(), response.getStatusMessage());
+        writer.printf("Content-Type: %s\r\n",   response.getContentType());
         writer.printf("Content-Length: %d\r\n", response.getBody().length);
         
-        // CORS заголовки - РАЗРЕШАЕМ ЛЮБОЙ ORIGIN
-        // Для тестирования и разработки
         if (origin == null || origin.isEmpty()) {
             writer.println("Access-Control-Allow-Origin: *");
             writer.println("Access-Control-Allow-Credentials: false");
@@ -193,18 +208,17 @@ public class HttpHandler implements Runnable {
         writer.println();
         writer.flush();
         
-        // Тело ответа
         try {
             clientSocket.getOutputStream().write(response.getBody());
         } catch (IOException e) {
-            logger.warning("Error writing response body".concat(" -> ").concat(String.valueOf(e)));
+            logger.error("Error writing response body: ", e.getMessage());
         }
     }
     
     private void sendError(PrintWriter writer, int statusCode, String message) {
-        writer.printf("HTTP/1.1 %d %s\r\n", statusCode, message);
+        writer.printf ("HTTP/1.1 %d %s\r\n", statusCode, message);
         writer.println("Content-Type: text/plain; charset=utf-8");
-        writer.println("Access-Control-Allow-Origin: *"); // Разрешаем для ошибок тоже
+        writer.println("Access-Control-Allow-Origin: *");
         writer.println("Connection: close");
         writer.println();
         writer.println(message);

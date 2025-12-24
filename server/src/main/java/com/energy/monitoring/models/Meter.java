@@ -3,7 +3,7 @@ package com.energy.monitoring.models;
 import java.sql.Timestamp;
 
 /* Класс прибора учёта */
-public class Metter {
+public class Meter {
     private int       id;
     private int       coordinatorId;
     private String    zbLongAddr;
@@ -21,7 +21,27 @@ public class Metter {
     private double    frequency;
     private double    neutralCurrent;
 
-    public Metter(int id, int coordinatorId, String zbLongAddr, short zbShortAddr, String name, String status, Timestamp createdAt, Timestamp lastSeen) {
+    public Meter(int id, int coordinatorId, String zbLongAddr, short zbShortAddr, String name, String status, Timestamp createdAt, Timestamp lastSeen, 
+                 double voltage, double current, double activePower, double reactivePower, double apparentPower, double powerFactor, double frequency, double neutralCurrent) {
+        this.id             = id;
+        this.coordinatorId  = coordinatorId;
+        this.zbLongAddr     = zbLongAddr;
+        this.zbShortAddr    = zbShortAddr;
+        this.name           = name;
+        this.status         = status;
+        this.createdAt      = createdAt;
+        this.lastSeen       = lastSeen;
+        this.voltage        = voltage;
+        this.current        = current;
+        this.activePower    = activePower;
+        this.reactivePower  = reactivePower;
+        this.apparentPower  = apparentPower;
+        this.powerFactor    = powerFactor;
+        this.frequency      = frequency;
+        this.neutralCurrent = neutralCurrent;
+    }
+
+    public Meter(int id, int coordinatorId, String zbLongAddr, short zbShortAddr, String name, String status, Timestamp createdAt, Timestamp lastSeen) {
         this.id            = id;
         this.coordinatorId = coordinatorId;
         this.zbLongAddr    = zbLongAddr;
