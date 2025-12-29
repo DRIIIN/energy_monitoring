@@ -2,9 +2,10 @@
 class PageHandler {
 
     constructor() {
-        this.authHandler = null;
-        this.uiHandler   = null;
-        this.currentUser = null;
+        this.authHandler        = null;
+        this.coordinatorHandler = null;
+        this.uiHandler          = null;
+        this.currentUser        = null;
         
         this.initialize();
     }
@@ -12,14 +13,16 @@ class PageHandler {
     async initialize() {
         console.log('Initializing Energy Monitoring System...');
         
-        this.uiHandler   = new UIHandler(this);
-        this.authHandler = new AuthHandler(this);
+        this.uiHandler          = new UIHandler(this);
+        this.authHandler        = new AuthHandler(this);
+        this.coordinatorHandler = new CoordinatorHandler(this)
         
+                
+        await this.authHandler.checkAuth()
+
         this.initEventListeners();
         this.uiHandler.initUI();
-        
-        await this.authHandler.checkAuth()
-        
+
         console.log('Application initialized successfully');
     }
     
@@ -67,18 +70,28 @@ class PageHandler {
             this.uiHandler.showUserProfile();
         });
 
-        document.getElementById('addCoordinatorButtonInMenu')?.addEventListener('click', () => {
+        document.getElementById('cancelCoordinatorInfo')?.addEventListener('click', () => {
+            this.uiHandler.showUserProfile();
+        });
+
+        document.getElementById('addCoordinator')?.addEventListener('click', async () => {
+            const success = await this.coordinatorHandler.createNewCoordinator();
+            // this.getUserCoordinators();
+            this.uiHandler.showUserProfile();
+        });
+
+        document.getElementById('openAddCoordinatorFormButtonInMenu')?.addEventListener('click', () => {
             this.uiHandler.showAddCoordinator();
         });
 
-        document.getElementById('addCoordinatorButton')?.addEventListener('click', () => {
+        document.getElementById('openAddCoordinatorFormButton')?.addEventListener('click', () => {
             this.uiHandler.showAddCoordinator();
         });
         
         document.getElementById('userMenuButton')?.addEventListener('click', () => {
             this.uiHandler.toggleUserMenu();
         });
-        
+
         document.addEventListener('click', (e) => {
             const userMenu       = document.getElementById('userMenuDropdown');
             const userMenuButton = document.getElementById('userMenuButton');
@@ -114,13 +127,24 @@ class PageHandler {
     showForgotPasswordForm() {
         this.uiHandler.showForgotPasswordForm();
     }
+
+    getUserCoordinators() {
+        this.coordinatorHandler.getUserCoordinators();
+    }
     
     // Обновление приветственной информации
     updateUserInfo() {
-        const user = this.authHandler.getCurrentUser();
-        this.uiHandler.updateUserInfo(user);
+        const user          = this.authHandler.getCurrentUser();
+        const nCoordinators = this.coordinatorHandler.getNumberOfCoordinators();
+        this.uiHandler.updateUserInfo(user, nCoordinators);
+        
+        if (nCoordinators > 0) {
+            this.uiHandler.hideBattonAdditionCoordinatorInProfile();
+        } else {
+            this.uiHandler.showBattonAdditionCoordinatorInProfile();
+        }
     }
-    
+
     // Отображение уведомления
     showMessage(message, type = 'info') {
         this.uiHandler.showMessage(message, type);
@@ -139,6 +163,11 @@ class PageHandler {
     // Отображение формы добавления координатора
     showAddCoordinator() {
         this.uiHandler.showAddCoordinator();
+    }
+    
+    // Отображение формы информации о координаторе
+    showCoordinatorInfo() {
+        this.uiHandler.showCoordinatorInfo();
     }
 }
 

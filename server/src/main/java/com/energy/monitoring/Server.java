@@ -20,13 +20,12 @@ import com.energy.monitoring.handlers.HttpHandler;
 
 /* Основные методы работы с сервером */
 public class Server {
-    private static final Logger logger      = LoggerFactory.getLogger(Server.class);  // Объект Logger для текущего класса
+    private static final Logger logger      = LoggerFactory.getLogger(Server.class);      // Объект Logger для текущего класса
+    private static final String CONFIG_FILE = "src\\main\\resources\\config\\config.properties"; // Имя файла с конфигурационными параметрами сервера
 
-    private static final String CONFIG_FILE = "config.properties";                    // Имя файла с конфигурационными параметрами сервера
-
-    private static int PORT;                                                          // Текущий порт сервера
-    private static int THREAD_POOL_SIZE;                                              // Максимальное количество потоков
-    private static int CLIENT_WAITING_TIMEOUT;                                        // Таймаут клиента
+    private static int PORT;                                              // Текущий порт сервера
+    private static int THREAD_POOL_SIZE;                                  // Максимальное количество потоков
+    private static int CLIENT_WAITING_TIMEOUT;                            // Таймаут клиента
 
     private final    int             port;
     private final    ExecutorService threadPool;
@@ -120,6 +119,7 @@ public class Server {
     }
 
     public static void main(String[] args) {
+
         Config.load(CONFIG_FILE);
 
         String dbUrl      = Config.getString(ConfigKeys.DataBase.URL);

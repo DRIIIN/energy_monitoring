@@ -19,12 +19,20 @@ public class JsonResponses {
                 endIndex = json.indexOf(",", startIndex);
                 if (endIndex == -1) {
                     endIndex = json.indexOf("}", startIndex);
+                } else 
+                if (json.substring(startIndex, endIndex).trim().equals("")) {
+                    return null;
+                } else {
+                    return json.substring(startIndex, endIndex).trim();
                 }
-
-                return json.substring(startIndex, endIndex).trim();
             }
 
-            return json.substring(startIndex, endIndex);
+            if (json.substring(startIndex, endIndex).equals("")) {
+                return null;
+            } else {
+                return json.substring(startIndex, endIndex);
+            }
+
         } catch (Exception e) {
             return null;
         }
@@ -78,12 +86,14 @@ public class JsonResponses {
                 "}}";
     }
 
-    public static String formingCreateCoordinatorSuccessResponse(int id, String name, String ip, int port, String status) {
+    public static String formingCreateCoordinatorSuccessResponse(int id, String name, String mac, String ip, int port, String status) {
+        String port_s = port != 0 ? String.valueOf(port) : null;
         return "{\"success\":true,\"data\":{" +
                     "\"id\":"       + id     + "," +
                     "\"name\":\""   + name   + "\"," +
+                    "\"mac\":\""    + mac    + "\"," +
                     "\"ip\":\""     + ip     + "\"," +
-                    "\"port\":"     + port   + "," +
+                    "\"port\":"     + port_s + "," +
                     "\"status\":\"" + status + "\"," +
                     "\"message\":\"Coordinator created successfully\"" +
                 "}}";
@@ -92,28 +102,36 @@ public class JsonResponses {
     public static String formingStartOfGetUserCoordinatorsResponse() {
         return "{\"success\":true,\"data\":[";
     }
-    public static String formingMiddleOfGetUserCoordinatorsResponse(int id, String name, String ip, int port, String status, Timestamp cteatedAt, Timestamp lastSeen) {
+    public static String formingMiddleOfGetUserCoordinatorsResponse(int id, String name, String mac, String ip, int port, String status, Timestamp cteatedAt, Timestamp lastSeen) {
+        String port_s = port != 0 ? String.valueOf(port) : null;
         return "{" +
                     "\"id\":"           + id        + "," +
                     "\"name\":\""       + name      + "\"," +
+                    "\"mac\":\""        + mac       + "\"," +
                     "\"ip\":\""         + ip        + "\"," +
-                    "\"port\":"         + port      + "," +
+                    "\"port\":"         + port_s    + "," +
                     "\"status\":\""     + status    + "\"," +
                     "\"created_at\":\"" + cteatedAt + "\"," +
                     "\"last_seen\":\""  + lastSeen  + "\"" +
                "},";
     }
     public static String formingEndOfGetUserCoordinatorsResponse(String response) {
-        return response.substring(0, response.length() - 1) + "]}";
+        if (response.charAt(response.length() - 1) == '[') {
+            return response + "]}";
+        } else {
+            return response.substring(0, response.length() - 1) + "]}";
+        }
     }
 
-    public static String formingStartOfGetCoordinatorResponse(int id, String name, String ip, int port, String status, Timestamp cteatedAt, Timestamp lastSeen) {
+    public static String formingStartOfGetCoordinatorResponse(int id, String name, String mac, String ip, int port, String status, Timestamp cteatedAt, Timestamp lastSeen) {
+        String port_s = port != 0 ? String.valueOf(port) : null;
         return  "{\"success\":true,\"data\":{" +
                     "\"coordinator\":{" +
                         "\"id\":"           + id        + "," +
                         "\"name\":\""       + name      + "\"," +
+                        "\"mac\":\""        + mac       + "\"," +
                         "\"ip\":\""         + ip        + "\"," +
-                        "\"port\":"         + port      + "," +
+                        "\"port\":"         + port_s    + "," +
                         "\"status\":\""     + status    + "\"," +
                         "\"created_at\":\"" + cteatedAt + "\"," +
                         "\"last_seen\":\""  + lastSeen  + "\"" +
@@ -131,17 +149,23 @@ public class JsonResponses {
                "},";
     }
     public static String formingEndOfGetCoordinatorResponse(String response) {
-        return response.substring(0, response.length() - 1) + "]}}";
+        if (response.charAt(response.length() - 1) == '[') {
+            return response + "]}}";
+        } else {
+            return response.substring(0, response.length() - 1) + "]}}";
+        }
     }
 
-    public static String formingStartOfConnectionToCoordinatorResponse(int id, String name, String ip, int port, String status, Timestamp cteatedAt, Timestamp lastSeen) {
+    public static String formingStartOfConnectionToCoordinatorResponse(int id, String name, String mac, String ip, int port, String status, Timestamp cteatedAt, Timestamp lastSeen) {
+        String port_s = port != 0 ? String.valueOf(port) : null;
         return  "{\"success\":true,\"data\":{" +
                     "\"message\":\"Connected to coordinator\"," +
                     "\"coordinator\":{" +
                         "\"id\":"           + id        + "," +
                         "\"name\":\""       + name      + "\"," +
+                        "\"mac\":\""        + mac       + "\"," +
                         "\"ip\":\""         + ip        + "\"," +
-                        "\"port\":"         + port      + "," +
+                        "\"port\":"         + port_s      + "," +
                         "\"status\":\""     + status    + "\"," +
                         "\"created_at\":\"" + cteatedAt + "\"," +
                         "\"last_seen\":\""  + lastSeen  + "\"" +
@@ -159,6 +183,10 @@ public class JsonResponses {
                "},";
     }
     public static String formingEndOfConnectionToCoordinatorResponse(String response) {
-        return response.substring(0, response.length() - 1) + "]}}";
+        if (response.charAt(response.length() - 1) == '[') {
+            return response + "]}}";
+        } else {
+            return response.substring(0, response.length() - 1) + "]}}";
+        }
     }
 }

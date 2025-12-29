@@ -20,11 +20,15 @@ public class JDBC {
     
     static {
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            logger.info("MySQL JDBC Driver loaded successfully");
+            // Class.forName("com.mysql.cj.jdbc.Driver");
+            // logger.info("MySQL JDBC Driver loaded successfully");
+            Class.forName("org.postgresql.Driver");
+            logger.info("PostgreSQL JDBC Driver loaded successfully");
         } catch (ClassNotFoundException e) {
-            logger.error("Failed to load MySQL JDBC Driver: {}", e.getMessage());
-            throw new RuntimeException("MySQL JDBC Driver not found: {}", e);
+            // logger.error("Failed to load MySQL JDBC Driver: {}", e.getMessage());
+            // throw new RuntimeException("MySQL JDBC Driver not found: {}", e);
+            logger.error("Failed to load PostgreSQL JDBC Driver: {}", e.getMessage());
+            throw new RuntimeException("PostgreSQL JDBC Driver not found: {}", e);
         }
     }
     

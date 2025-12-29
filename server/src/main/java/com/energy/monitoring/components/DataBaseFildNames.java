@@ -14,6 +14,7 @@ public class DataBaseFildNames {
             public static final String ID         = "id";
             public static final String USER_ID    = "user_id";
             public static final String NAME       = "name";
+            public static final String MAC        = "mac";
             public static final String IP         = "ip";
             public static final String PORT       = "port";
             public static final String STATUS     = "status";

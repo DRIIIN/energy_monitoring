@@ -208,7 +208,7 @@ a:hover {
 
 /* ===== КНОПКИ ===== */
 .btn {
-    display: inline-flex;
+    display: inline;
     align-items: center;
     justify-content: center;
     gap: var(--spacing-sm);
@@ -227,6 +227,18 @@ a:hover {
     transition: all var(--transition-fast);
     background-color: transparent;
     color: var(--dark-color);
+}
+
+.fas {
+    text-align: center;
+}
+
+.bth.hide {
+    display: none;
+}
+
+.btn-primary.hide {
+    display: none;
 }
 
 .btn:disabled,
@@ -829,6 +841,19 @@ select.form-control {
     background-color: rgba(231, 76, 60, 0.1);
 }
 
+.menu-item.coordinator-action {
+    width: 10%;
+    background-color: var(--gray-300);
+}
+
+.coordinator-actions {
+    display: flex;
+    justify-content: space-between;
+    color: var(--gray-warning-dark);
+    width: 100%;
+    display: inline;
+}
+
 .menu-divider {
     height: 1px;
     background-color: var(--gray-300);
@@ -861,6 +886,36 @@ select.form-control {
 
 .user-profile-info p {
     margin-bottom: 0.5rem;
+}
+
+.coordinator-item-block {
+    background-color: var(--gray-100);
+    padding: var(--spacing);
+    border-radius: var(--border-radius);
+    margin: var(--spacing) 0;
+}
+
+.coordinator-item-block p {
+    margin-bottom: 0.2rem;
+}
+
+.coordinator-info-block {
+    background-color: var(--gray-100);
+    padding: var(--spacing);
+    border-radius: var(--border-radius);
+    margin: var(--spacing) 0;
+}
+
+.coordinator-info-block p {
+    margin-bottom: 0.2rem;
+}
+
+.coordinator-status {
+    color: var(--success-color);
+}
+
+.coordinator-status.offline {
+    color: var(--danger-color);
 }
 
 /* Toast уведомления */

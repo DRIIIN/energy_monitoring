@@ -28,4 +28,15 @@ public class ConfigKeys {
         public static final String ALGORITHM   = "password.hasher.algorithm";
         public static final String SALT_LENGTH = "password.hasher.salt_length";
     }
+
+    public class Uart {
+        public static final String MAC_ARDRESSES    = "uart.mac_addresses";
+        public static final String PORT_NAMES       = "uart.ports";
+        public static final String BAUND_RATE       = "uart.baund";
+        public static final String DATA_BITS        = "uart.data_bits";
+        public static final String STOP_BITS        = "uart.stop_bits";
+        public static final String PARITY           = "uart.parity";
+        public static final String MAX_LEN          = "uart.max_len";
+        public static final String RESPONSE_TIMEOUT = "uart.response_timeout";
+    }
 }

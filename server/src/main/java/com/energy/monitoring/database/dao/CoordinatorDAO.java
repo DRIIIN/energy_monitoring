@@ -9,6 +9,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.energy.monitoring.components.DataBaseFildNames;
 import com.energy.monitoring.components.SqlRequests;
 import com.energy.monitoring.database.JDBC;
@@ -16,18 +19,22 @@ import com.energy.monitoring.models.Coordinator;
 
 /* Методы для взаимодействия с тааблицей координаторов */
 public class CoordinatorDAO {
-    
-    public Coordinator createCoordinator(int userId, String name, String ip, int port) throws SQLException {
+    private static final Logger logger = LoggerFactory.getLogger(CoordinatorDAO.class);  // Объект Logger для текущего класса
+
+    public Coordinator createCoordinator(int userId, String name, String mac, String ip, int port) throws SQLException {
         String sql = SqlRequests.Coordinator.CREATE_COORDINATOR;
         
+        logger.info("{}, {}", ip, port);
+
         try (Connection connection = JDBC.getConnection();
             PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            
+        
             stmt.setInt   (1, userId);
             stmt.setString(2, name);
-            stmt.setString(3, ip);
-            stmt.setInt   (4, port);
-            stmt.setString(5, "offline");
+            stmt.setString(3, mac);
+            stmt.setString(4, ip);
+            stmt.setInt   (5, port);
+            stmt.setString(6, "offline");
             
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
@@ -40,6 +47,7 @@ public class CoordinatorDAO {
                         generatedKeys.getInt(1),
                         userId,
                         name,
+                        mac,
                         ip,
                         port,
                         "offline",
@@ -68,6 +76,7 @@ public class CoordinatorDAO {
                         rs.getInt      (DataBaseFildNames.Tables.Coordinator.ID),
                         rs.getInt      (DataBaseFildNames.Tables.Coordinator.USER_ID),
                         rs.getString   (DataBaseFildNames.Tables.Coordinator.NAME),
+                        rs.getString   (DataBaseFildNames.Tables.Coordinator.MAC),
                         rs.getString   (DataBaseFildNames.Tables.Coordinator.IP),
                         rs.getInt      (DataBaseFildNames.Tables.Coordinator.PORT),
                         rs.getString   (DataBaseFildNames.Tables.Coordinator.STATUS),
@@ -95,6 +104,7 @@ public class CoordinatorDAO {
                         rs.getInt      (DataBaseFildNames.Tables.Coordinator.ID),
                         rs.getInt      (DataBaseFildNames.Tables.Coordinator.USER_ID),
                         rs.getString   (DataBaseFildNames.Tables.Coordinator.NAME),
+                        rs.getString   (DataBaseFildNames.Tables.Coordinator.MAC),
                         rs.getString   (DataBaseFildNames.Tables.Coordinator.IP),
                         rs.getInt      (DataBaseFildNames.Tables.Coordinator.PORT),
                         rs.getString   (DataBaseFildNames.Tables.Coordinator.STATUS),

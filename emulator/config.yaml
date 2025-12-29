@@ -1,0 +1,67 @@
+# Конфигурация эмулятора координатора ZigBee
+
+coordinator:
+  port: 8080
+  pan_id: 0x1234
+  network_channel: 11
+  extended_pan_id: "00:12:4B:00:01:02:03:04"
+  permit_joining: true
+
+logging:
+  level: INFO
+  file: "coordinator.log"
+  console: true
+
+simulation:
+  update_interval: 10.0  # секунды
+  meter_data_variance: 0.1  # разброс данных
+  node_status_change_probability: 0.05  # вероятность смены статуса
+
+demo_nodes:
+  - name: "Router-1"
+    type: "router"
+    address: 0x0000000000000001
+    short_address: 1
+    rssi: -65
+    lqi: 95
+    has_meter: false
+    
+  - name: "Meter-1"
+    type: "end_device"
+    address: 0x0000000000000002
+    short_address: 2
+    rssi: -72
+    lqi: 88
+    has_meter: true
+    meter_data:
+      voltage: 225.5
+      current: 15.2
+      active_power: 3420.0
+      reactive_power: 850.0
+      apparent_power: 3530.0
+      power_factor: 0.97
+      frequency: 50.0
+      neutral_current: 0.5
+
+  - name: "Meter-2"
+    type: "end_device"
+    address: 0x0000000000000003
+    short_address: 3
+    rssi: -68
+    lqi: 92
+    has_meter: true
+    meter_data:
+      voltage: 223.8
+      current: 22.7
+      active_power: 5080.0
+      reactive_power: 1200.0
+      apparent_power: 5220.0
+      power_factor: 0.95
+      frequency: 50.1
+      neutral_current: 1.2
+
+network_behavior:
+  command_timeout: 5.0  # секунды
+  response_delay: 0.1  # секунды
+  max_connections: 10
+  connection_timeout: 30.0  # секунды

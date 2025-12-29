@@ -57,6 +57,7 @@ class UIHandler {
         document.getElementById('userProfileBlock').classList.add('show');
         document.getElementById('addCoordinatorBlock').classList.remove('show');
         document.getElementById('userMenuDropdown').classList.remove('show');
+        document.getElementById('coordinatorInfoBlock').classList.remove('show');
     }
 
     // Отображение блока добавления координатора
@@ -64,18 +65,37 @@ class UIHandler {
         document.getElementById('userProfileBlock').classList.remove('show');
         document.getElementById('addCoordinatorBlock').classList.add('show');
         document.getElementById('userMenuDropdown').classList.remove('show');
+        document.getElementById('coordinatorInfoBlock').classList.remove('show');
+    }
+
+    // Отображение блока информации о координаторе
+    showCoordinatorInfo() {
+        document.getElementById('userProfileBlock').classList.remove('show');
+        document.getElementById('coordinatorInfoBlock').classList.add('show');
+        document.getElementById('userMenuDropdown').classList.remove('show');
+    }
+
+    // Скрытие кнопки добавлени координатора в профиле пользователя
+    hideBattonAdditionCoordinatorInProfile() {
+        document.getElementById('openAddCoordinatorFormButton').classList.add('hide');
+    }
+
+    // Отображение кнопки добавлени координатора в профиле пользователя
+    showBattonAdditionCoordinatorInProfile() {
+        document.getElementById('openAddCoordinatorFormButton').classList.remove('hide');
     }
 
     // Обновления информации о текущем пользователе
-    updateUserInfo(user) {
+    updateUserInfo(user, numberCoords) {
         if (!user) {
             return;
         }
         
         const elements = [
-            { id: 'userName',         text: user.username },
-            { id: 'dropdownUserName', text: user.username },
-            { id: 'profilUsername',   text: user.username }
+            { id: 'userName',                 text: user.username },
+            { id: 'dropdownUserName',         text: user.username },
+            { id: 'profilUsername',           text: user.username },
+            { id: 'profilCoordinatorsNumber', text: numberCoords  }
         ];
         
         elements.forEach(({ id, text }) => {

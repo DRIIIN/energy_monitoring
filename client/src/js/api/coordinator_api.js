@@ -16,10 +16,11 @@ class CoordinatorAPI {
     }
     
     // Создание нового координатора
-    static async createCoordinator(name, ip, port) {
+    static async createCoordinator(name, mac, ip, port) {
         const response = await RequestAPI.post('/api/coordinators', {
             name: name,
-            ip: ip,
+            mac:  mac,
+            ip:   ip,
             port: port
         });
 

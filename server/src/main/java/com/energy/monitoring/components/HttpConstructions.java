@@ -41,6 +41,7 @@ public class HttpConstructions {
         public static final String IP             = "ip";
         public static final String NAME           = "name";
         public static final String PORT           = "port";
+        public static final String MAC            = "mac";
 
     }
 

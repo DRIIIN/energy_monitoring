@@ -19,8 +19,9 @@ class AuthHandler {
             if (result.success && result.data.valid) {
                 this.currentUser = result.data.user;
                 this.pageHandler.showAppScreen();
-                this.pageHandler.showUserProfile();
+                this.pageHandler.getUserCoordinators();
                 this.pageHandler.updateUserInfo();
+                this.pageHandler.showUserProfile();
 
                 return true;
             } else {
@@ -53,6 +54,7 @@ class AuthHandler {
             if (result.success) {
                 this.currentUser = result.data.user;
                 this.pageHandler.showAppScreen();
+                this.pageHandler.getUserCoordinators();
                 this.pageHandler.updateUserInfo();
                 this.pageHandler.showUserProfile();
                 this.pageHandler.showMessage('Вход выполнен успешно', 'success');

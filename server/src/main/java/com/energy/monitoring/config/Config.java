@@ -17,23 +17,32 @@ public class Config {
 
     // Значения по умолчанию
     static {
-        defaultProperties.setProperty(ConfigKeys.Server.PORT,                   "8081");
+        defaultProperties.setProperty(ConfigKeys.Server.PORT,                   "8081"     );
         defaultProperties.setProperty(ConfigKeys.Server.HOST,                   "127.0.0.1");
-        defaultProperties.setProperty(ConfigKeys.Server.MAX_THREADS,            "256");
-        defaultProperties.setProperty(ConfigKeys.Server.CLIENT_WEITING_TIMEOUT, "30000");
+        defaultProperties.setProperty(ConfigKeys.Server.MAX_THREADS,            "256"      );
+        defaultProperties.setProperty(ConfigKeys.Server.CLIENT_WEITING_TIMEOUT, "30000"    );
         
-        defaultProperties.setProperty(ConfigKeys.DataBase.URL,                  "jdbc:mysql://localhost:3323/energy_monitoring_database");
-        defaultProperties.setProperty(ConfigKeys.DataBase.USER,                 "root");
-        defaultProperties.setProperty(ConfigKeys.DataBase.PASSWORD,             "12345");
+        defaultProperties.setProperty(ConfigKeys.DataBase.URL,                  "jdbc:postgresql://localhost:5432/energy_monitoring_database");
+        defaultProperties.setProperty(ConfigKeys.DataBase.USER,                 "postgres"                                                   );
+        defaultProperties.setProperty(ConfigKeys.DataBase.PASSWORD,             "12345"                                                      );
         
-        defaultProperties.setProperty(ConfigKeys.JsonWebToken.SECRET,           "super-secret-key-:)");
-        defaultProperties.setProperty(ConfigKeys.JsonWebToken.EXPIRATION_HOURS, "24");
+        defaultProperties.setProperty(ConfigKeys.JsonWebToken.SECRET,           "super-secret-key-:)"     );
+        defaultProperties.setProperty(ConfigKeys.JsonWebToken.EXPIRATION_HOURS, "24"                      );
         defaultProperties.setProperty(ConfigKeys.JsonWebToken.ISSUER,           "energy-monitoring-system");
 
-        defaultProperties.setProperty(ConfigKeys.PasswordHasher.ITERATIONS,     "65536");
-        defaultProperties.setProperty(ConfigKeys.PasswordHasher.KEY_LENGTH,     "256");
+        defaultProperties.setProperty(ConfigKeys.PasswordHasher.ITERATIONS,     "65536"               );
+        defaultProperties.setProperty(ConfigKeys.PasswordHasher.KEY_LENGTH,     "256"                 );
         defaultProperties.setProperty(ConfigKeys.PasswordHasher.ALGORITHM,      "PBKDF2WithHmacSHA256");
-        defaultProperties.setProperty(ConfigKeys.PasswordHasher.SALT_LENGTH,    "16");
+        defaultProperties.setProperty(ConfigKeys.PasswordHasher.SALT_LENGTH,    "16"                  );
+
+        defaultProperties.setProperty(ConfigKeys.Uart.MAC_ARDRESSES,            ""    );
+        defaultProperties.setProperty(ConfigKeys.Uart.PORT_NAMES,               ""    );
+        defaultProperties.setProperty(ConfigKeys.Uart.BAUND_RATE,               "9600");
+        defaultProperties.setProperty(ConfigKeys.Uart.DATA_BITS,                "8"   );
+        defaultProperties.setProperty(ConfigKeys.Uart.STOP_BITS,                "1"   );
+        defaultProperties.setProperty(ConfigKeys.Uart.PARITY,                   "0"   );
+        defaultProperties.setProperty(ConfigKeys.Uart.MAX_LEN,                  "73"  );
+        defaultProperties.setProperty(ConfigKeys.Uart.RESPONSE_TIMEOUT,         "5000");
     }
 
     // Загрузка значений из конфигурационного файла configFile
@@ -42,7 +51,7 @@ public class Config {
             properties.load(input);
             logger.info("Configuration loaded from: {}", configFile);
         } catch (IOException e) {
-            logger.warn("Could not load configuration from {}, using defaults", configFile);
+            logger.warn("Could not load configuration from {}, using defaults. Error: {}", configFile, e.getMessage());
         }
     }
     

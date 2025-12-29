@@ -186,13 +186,13 @@
     <div id="appScreen" class="screen">
         
         <header class="app-header">
-            <!-- <div class="header-left"> -->
+            <div class="header-left">
 
                 <div class="logo">
                     <i class="fas fa-bolt"></i>
                     <span class="logo-text">EMS</span>
                 </div>
-            <!-- </div> -->
+            </div>
             
             <div class="header-right">
                 <div class="user-profile">
@@ -224,7 +224,7 @@
                                 <span>Мой профиль</span>
                             </button>
 
-                            <button class="menu-item add-coordinator" id="addCoordinatorButtonInMenu">
+                            <button class="menu-item add-coordinator" id="openAddCoordinatorFormButtonInMenu">
                                 <i class="fas fa-rss"></i>
                                 <span>Добавить сеть</span>
                             </button>
@@ -245,7 +245,7 @@
         <main class="app-content">
             <div class="page-container">  
                 <div class="user-card">
-
+                    <!-- Лиичный кабинет пользователя -->
                     <div class="card" id="userProfileBlock">
                         <div class="card-body">
 
@@ -258,17 +258,17 @@
 
                             <div class="coordinators-info">
                                 <h3><i class="fas fa-network-wired"></i> Доступные сети</h3>
-                                <button class="btn btn-primary" id="addCoordinatorButton">
-                                    <i class="fas fa-plus"></i> Добавить сеть
-                                </button>
-                                <div class="coordinators-grid" id="coordinatorsGrid">
+                                <div class="coordinators-list" id="coordinatorsList">
                                     
                                 </div>
+                                <button class="btn btn-primary" id="openAddCoordinatorFormButton">
+                                    <i class="fas fa-plus"></i> Добавить сеть
+                                </button>
                             </div>
 
                         </div>
                     </div>
-
+                    <!-- Форма добавления координаторов -->
                     <div class="card" id="addCoordinatorBlock">
                         <div class="card-body">
                             <div class="modal" id="addCoordinatorModal">
@@ -280,16 +280,81 @@
                                             <input type="text" id="coordinatorName" required>
                                         </div>
                                         <div class="form-group">
-                                            <label for="coordinatorIp">IP адрес</label>
-                                            <input type="text" id="coordinatorIp" required placeholder="192.168.1.100">
+                                            <label for="coordinatorMac">MAC-адрес</label>
+                                            <input type="text" id="coordinatorMac" required placeholder="3C9654FEFFCA4C40">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="coordinatorIp">IP-адрес</label>
+                                            <input type="text" id="coordinatorIp" pattern="\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}$" placeholder="192.168.1.100">
                                         </div>
                                         <div class="form-group">
                                             <label for="coordinatorPort">Порт</label>
-                                            <input type="number" id="coordinatorPort" value="8080" required>
+                                            <input type="number" id="coordinatorPort" placeholder="8080">
                                         </div>
                                         <div class="form-actions">
-                                            <button type="submit" class="btn btn-success">Добавить</button>
+                                            <button type="button" class="btn btn-outline-primary" id="addCoordinator">Добавить</button>
                                             <button type="button" class="btn btn-outline" id="cancelAddCoordinator">Отмена</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Меню взаимодействия с координатором -->
+                    <div class="card" id="coordinatorInfoBlock">
+                        <div class="card-body">
+                            <div class="modal" id="coordinatorInfoModal">
+                                <div class="modal-content">
+                                    <h2><i class="fas fa-network-wired"></i> Информайия о сети: <text class="coordinatro-info-name" id="coordinatorInfoName">Загрузка...</text></h2>
+                                    <form id="coordinatorInfoForm">
+                                        <div class="coordinator-info-block coordinator">
+                                            <h3><i class="fas fa-plus-circle"></i> Координатор</h3>
+                                            <p><strong>MAC-Адрес:            </strong> <text class="coordinatro-info-mac"        id="coordinatorInfoMac">      Загрузка...</text></p>
+                                            <p><strong>IP-Адрес:             </strong> <text class="coordinatro-info-ip"         id="coordinatorInfoIp">       Загрузка...</text></p>
+                                            <p><strong>Статус:               </strong> <text class="coordinatro-info-status"     id="coordinatorInfoStatus">   Загрузка...</text></p>
+                                            <p><strong>Дата создание:        </strong> <text class="coordinatro-info-created-at" id="coordinatorInfoCreatedAt">Загрузка...</text></p>
+                                            <p><strong>Последняя активность: </strong> <text class="coordinatro-info-last-seen"  id="coordinatorInfoLastSeen"> Загрузка...</text></p>
+                                        </div>
+                                        <div class="coordinator-info-block comands">
+                                            <h3><i class="fas fa-plus-circle"></i> Отправить команду</h3>
+                                            <div class="form-group">
+                                                <label for="commant-to-coord">Команда:</label>
+                                                <select id="commant-to-coord">  
+                                                    <option value="0x00">Открытие сессии</option>  
+                                                    <option value="0x01">Установка кастомного MAC-адреса узлу</option>  
+                                                    <option value="0x05">Изгнание узла из сети</option>  
+                                                    <option value="0x06">Перезагрузка узла</option>
+                                                    <option value="0x07">Получение списка активных узлов в сети</option>
+                                                    <option value="0x08">Разрешить/запретить подключение новых узлов</option>
+                                                    <option value="0x09">Получение основной информации о сети</option>
+                                                    <option value="0x0B">Пересоздание сети на случайном канале</option>
+                                                    <option value="0x0C">Получение перечня подключавшихся к сети узлов</option>
+                                                    <option value="0x19">Получение версии прошивки узла</option>
+                                                    <option value="0x1A">Загрузка обновления для узла</option>
+                                                    <option value="0x1B">Отправка обновления узлу</option>
+                                                    <option value="0x23">Пересоздание сети на заданном канале</option>
+                                                    <option value="0xAB">Отправка ПИРС-запросов на прибор учёта</option>
+                                                    <option value="0xDB">Установка отладочного режима узла</option>
+                                                    <option value="0xFF">Закрытие сессии</option>
+                                                </select>  
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="command-params">Параметры:</label>
+                                                <input type="text" id="command-params">  
+                                            </div>
+                                            <button type="button" class="btn btn-outline-primary">Отправить</button>  
+                                        </div>
+                                        <div class="coordinator-info-block response">
+                                            <h3><i class="fas fa-plus-circle"></i> Ответ на команду</h3>
+                                        </div>
+                                        <div class="coordinator-info-block meters">
+                                            <h3><i class="fas fa-plus-circle"></i> Приборы учёта</h3>
+                                            <div class="meters-list" id="metersList">
+                                                <p>Нет доступных приборов учёта</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-actions">
+                                            <button type="button" class="btn btn-outline-primary" id="cancelCoordinatorInfo">Отмена</button>
                                         </div>
                                     </form>
                                 </div>
@@ -310,6 +375,7 @@
     <script src="js/api/user_api.js"></script>
     <script src="js/api/coordinator_api.js"></script>
     <script src="js/handlers/auth_handler.js"></script>
+    <script src="js/handlers/coordinator_handler.js"></script>
     <script src="js/handlers/ui_handler.js"></script>
     <script src="js/page_handler.js"></script>
 </body>

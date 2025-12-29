@@ -44,7 +44,7 @@ class RequestAPI {
         try {
             const response     = await fetch(url, config);
             const responseTime = Date.now() - startTime;
-            
+
             let data;
             const contentType = response.headers.get('content-type');
             
@@ -61,7 +61,6 @@ class RequestAPI {
                 headers:    response.headers,
                 responseTime
             };
-            
             if (!response.ok) {
                 const error  = new Error(data.error || data.message || `HTTP ${response.status}`);
                 error.status = response.status;

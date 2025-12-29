@@ -7,16 +7,18 @@ public class Coordinator {
     private int       id;
     private int       userId;
     private String    name;
+    private String    mac;
     private String    ip;
     private int       port;
     private String    status;
     private Timestamp createdAt;
     private Timestamp lastSeen;
 
-    public Coordinator(int id, int userId, String name, String ip, int port, String status, Timestamp createdAt, Timestamp lastSeen) {
+    public Coordinator(int id, int userId, String name, String mac, String ip, int port, String status, Timestamp createdAt, Timestamp lastSeen) {
         this.id        = id;
         this.userId    = userId;
         this.name      = name;
+        this.mac       = mac;
         this.ip        = ip;
         this.port      = port;
         this.status    = status;
@@ -34,6 +36,10 @@ public class Coordinator {
 
     public String getName() { 
         return name; 
+    }
+
+    public String getMac() { 
+        return mac; 
     }
 
     public String getIp() { 
@@ -56,35 +62,39 @@ public class Coordinator {
         return lastSeen; 
     }
 
-    public void getId(int newId) { 
+    public void setId(int newId) { 
         id = newId; 
     }
     
-    public void getUserId(int newUserId) { 
+    public void setUserId(int newUserId) { 
         userId = newUserId; 
     }
 
-    public void getName(String newName) { 
+    public void setName(String newName) { 
         name = newName; 
     }
 
-    public void getIp(String newIp) { 
+    public void setMac(String newMac) { 
+        mac = newMac; 
+    }
+
+    public void setIp(String newIp) { 
         ip = newIp; 
     }
 
-    public void getPort(int newPort) { 
+    public void setPort(int newPort) { 
         port = newPort; 
     }
 
-    public void getStatus(String newStatus) { 
+    public void setStatus(String newStatus) { 
         status = newStatus; 
     }
 
-    public void getCreatedAt(Timestamp newCreatedAt) { 
+    public void setCreatedAt(Timestamp newCreatedAt) { 
         createdAt = newCreatedAt; 
     }
 
-    public void getLastSeen(Timestamp newLastSeen) { 
+    public void setLastSeen(Timestamp newLastSeen) { 
         lastSeen = newLastSeen; 
     }
 }

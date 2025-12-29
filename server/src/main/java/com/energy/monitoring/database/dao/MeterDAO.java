@@ -17,7 +17,7 @@ import com.energy.monitoring.models.Meter;
 /* Методы для взаимодействия с тааблицей приборов учёта */
 public class MeterDAO {
     public Meter createMeter(int coordinatorId, String zbLongAddr, short zbShortAddr, String name) throws SQLException {
-        String sql = SqlRequests.Coordinator.CREATE_COORDINATOR;
+        String sql = SqlRequests.Meter.CREATE_METER;
         
         try (Connection connection = JDBC.getConnection();
             PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {

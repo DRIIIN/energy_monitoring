@@ -25,9 +25,10 @@ public class SqlRequests {
         public static final String CREATE_COORDINATOR           =                   "INSERT INTO " + DataBaseFildNames.TableNames.COORDINATORS      + " (" 
                                                                                                    + DataBaseFildNames.Tables.Coordinator.USER_ID   + ", " 
                                                                                                    + DataBaseFildNames.Tables.Coordinator.NAME      + ", " 
+                                                                                                   + DataBaseFildNames.Tables.Coordinator.MAC       + ", " 
                                                                                                    + DataBaseFildNames.Tables.Coordinator.IP        + ", " 
                                                                                                    + DataBaseFildNames.Tables.Coordinator.PORT      + ", " 
-                                                                                                   + DataBaseFildNames.Tables.Coordinator.STATUS    + ") VALUES (?, ?, ?, ?, ?)";
+                                                                                                   + DataBaseFildNames.Tables.Coordinator.STATUS    + ") VALUES (?, ?, ?, ?, ?, ?)";
 
         public static final String GET_USER_COORDINATORS        =                 "SELECT * FROM " + DataBaseFildNames.TableNames.COORDINATORS      + " WHERE " 
                                                                                                    + DataBaseFildNames.Tables.Coordinator.USER_ID   + " = ? ORDER BY " 
@@ -49,7 +50,7 @@ public class SqlRequests {
     }
 
     public class Meter {
-        public static final String CREATE_COORDINATOR        =   "INSERT INTO " + DataBaseFildNames.TableNames.METERS            + " (" 
+        public static final String CREATE_METER              =   "INSERT INTO " + DataBaseFildNames.TableNames.METERS            + " (" 
                                                                                 + DataBaseFildNames.Tables.Meter.COORDINATOR_ID  + ", " 
                                                                                 + DataBaseFildNames.Tables.Meter.NAME            + ", " 
                                                                                 + DataBaseFildNames.Tables.Meter.ZB_LONG_ADDR    + ", " 

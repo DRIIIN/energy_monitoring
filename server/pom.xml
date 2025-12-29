@@ -12,8 +12,9 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <logger.version>2.0.17</logger.version>
-        <mysql.version>8.0.33</mysql.version>
+        <postgresql.version>42.7.8</postgresql.version>
         <java-jwt.version>4.5.0</java-jwt.version>
+        <jSerialComm.version>2.11.4</jSerialComm.version>
     </properties>
 
     <dependencies>
@@ -23,16 +24,21 @@
             <artifactId>slf4j-api</artifactId>
             <version>${logger.version}</version>
         </dependency>
-        <dependency>
+        <!-- <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>${logger.version}</version>
+        </dependency> -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.4.14</version>
         </dependency>
 
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql.version}</version>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
         </dependency>
 
         <dependency>
@@ -41,6 +47,12 @@
             <version>${java-jwt.version}</version>
         </dependency>
         
+        <dependency>
+            <groupId>com.fazecast</groupId>
+            <artifactId>jSerialComm</artifactId>
+            <version>${jSerialComm.version}</version>
+        </dependency>
+
     </dependencies>
 
 </project>

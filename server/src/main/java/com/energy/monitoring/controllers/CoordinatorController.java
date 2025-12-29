@@ -19,9 +19,12 @@ import com.energy.monitoring.models.HttpRequest;
 import com.energy.monitoring.models.HttpResponse;
 import com.energy.monitoring.models.Meter;
 import com.energy.monitoring.utils.JwtUtil;
+import com.energy.monitoring.utils.UartUtil;
 
 /* Клаасс метадов обработки запросов координаторам */
 public class CoordinatorController {
+    // private static final Logger logger      = LoggerFactory.getLogger(CoordinatorController.class);  // Объект Logger для текущего класса
+
     // Обрабатывает запрос request и отправляет на него ответ
     public static HttpResponse handleRequest(HttpRequest request) {
         Map<String, String> headers = request.getHeaders();
@@ -37,6 +40,7 @@ public class CoordinatorController {
                 final String coordinatorEndPoint = EndPoints.COORDINATOR + coordinatorId;
                 final String connectEndPoint     = EndPoints.COORDINATOR + coordinatorId + EndPoints.CONNECT;
 
+                // logger.info(connectEndPoint + " " + endPoint + " " + coordinatorId);
                 return switch (method) {
                     case Methods.POST -> {
                         if (endPoint.equals(EndPoints.COORDINATORS)) {
@@ -73,31 +77,38 @@ public class CoordinatorController {
         }
     }
 
-    // Возвращает id координатора на конечной точки из запроса
+    // Возвращает id координатора на основе конечной точки из запроса
     private static int getCoordinatorIdFromEndPoint(String endPoint) {
         String[] parts = endPoint.split("/");
-
-        return parts.length == 4 ? Integer.parseInt(parts[3]) : 0;
+        
+        if ((parts.length == 4 && parts[2].equals("coordinators")) || (parts.length == 5 && parts[4].equals("connect"))) {
+            return Integer.parseInt(parts[3]);
+        } else {
+            return 0;
+        }
     }
     
     // Формирует ответ на http-запрос создания координатора пользователю с id userId
     private static HttpResponse handlerCreateCoordinator(HttpRequest request, int userId) {
         try {
+            // logger.info("Handler create coordinator request: {}", request.getBody());
             String body   = request.getBody();
             String name   = JsonResponses.extractFromJson(body, JsonBlocks.NAME);
+            String mac    = JsonResponses.extractFromJson(body, JsonBlocks.MAC);
             String ip     = JsonResponses.extractFromJson(body, JsonBlocks.IP);
-            Integer port  = Integer.valueOf(JsonResponses.extractFromJson(body, JsonBlocks.PORT));
-            
-            if (name == null || ip == null || port == 0) {
+            String port_s = JsonResponses.extractFromJson(body, JsonBlocks.PORT);
+            Integer port  = port_s != null ? Integer.valueOf(port_s) : 0;
+
+            if (name == null || mac == null) {
                 return HttpResponse.badRequest(JsonResponses.formingUniversalResponse(false, "Missing required fields"));
             }
-
+            
             CoordinatorDAO coordinatorDAO = new CoordinatorDAO();
-            Coordinator coordinator       = coordinatorDAO.createCoordinator(userId, name, ip, port);
+            Coordinator coordinator       = coordinatorDAO.createCoordinator(userId, name, mac, ip, port);
             
-            String response = JsonResponses.formingCreateCoordinatorSuccessResponse(coordinator.getId(), coordinator.getName(), coordinator.getIp(), 
+            String response = JsonResponses.formingCreateCoordinatorSuccessResponse(coordinator.getId(), coordinator.getName(), coordinator.getMac(), coordinator.getIp(), 
                                                                                     coordinator.getPort(), coordinator.getStatus());
-            
+            // logger.info("Handler create c oordinator response: {}", response);
             return HttpResponse.created(response);
         } catch (SQLException e) {
             return HttpResponse.error(HttpStatusCodes.INTERNAL_SERVER_ERROR, JsonResponses.formingUniversalResponse(false, "Database error: " + e.getMessage()));
@@ -107,17 +118,19 @@ public class CoordinatorController {
     // Формирует ответ на http-запрос на получение информации о координаторах по id userID
     private static HttpResponse handlerGetUserCoordinators(int userId) {
         try {
+            // logger.info("handlerGetUserCoordinators");
             CoordinatorDAO    coordinatorDAO = new CoordinatorDAO();
             List<Coordinator> coordinators   = coordinatorDAO.getUserCoordinators(userId);
             
             String response = JsonResponses.formingStartOfGetUserCoordinatorsResponse();
             for (int i = 0; i < coordinators.size(); i++) {
                 Coordinator coordinator = coordinators.get(i);
-                response += JsonResponses.formingMiddleOfGetUserCoordinatorsResponse(coordinator.getId(), coordinator.getName(), coordinator.getIp(), coordinator.getPort(), 
-                                                                                        coordinator.getStatus(), coordinator.getCreatedAt(), coordinator.getLastSeen());
+                response += JsonResponses.formingMiddleOfGetUserCoordinatorsResponse(coordinator.getId(), coordinator.getName(), coordinator.getMac(), coordinator.getIp(), 
+                                                                                     coordinator.getPort(), coordinator.getStatus(), coordinator.getCreatedAt(), coordinator.getLastSeen());
             }
             response = JsonResponses.formingEndOfGetUserCoordinatorsResponse(response);
 
+            // logger.info("Response: {}", response);
             return HttpResponse.ok(response, ContentTypes.JSON);       
         } catch (SQLException e) {
             return HttpResponse.error(HttpStatusCodes.INTERNAL_SERVER_ERROR, JsonResponses.formingUniversalResponse(false, "Database error: " + e.getMessage()));
@@ -127,6 +140,7 @@ public class CoordinatorController {
     // Формирует ответ на http-запрос получения информации о координаторе по id coordinatorId 
     private static HttpResponse handlerGetCoordinator(int userId, int coordinatorId) {
         try {
+            // logger.info("handlerGetCoordinator");
             CoordinatorDAO coordinatorDAO = new CoordinatorDAO();
             Coordinator    coordinator    = coordinatorDAO.getCoordinator(coordinatorId);
             
@@ -139,16 +153,17 @@ public class CoordinatorController {
                 MeterDAO    meterDAO = new MeterDAO();
                 List<Meter> meters   = meterDAO.getMetersByCoordinator(coordinatorId);
                 
-                String response = JsonResponses.formingStartOfGetCoordinatorResponse(coordinator.getId(), coordinator.getName(), coordinator.getIp(), coordinator.getPort(), 
-                                                                                     coordinator.getStatus(), coordinator.getCreatedAt(), coordinator.getLastSeen());
+                String response = JsonResponses.formingStartOfGetCoordinatorResponse(coordinator.getId(), coordinator.getName(), coordinator.getMac(), coordinator.getIp(), 
+                                                                                     coordinator.getPort(), coordinator.getStatus(), coordinator.getCreatedAt(), coordinator.getLastSeen());
                 for (int i = 0; i < meters.size(); i++) {
                     Meter meter = meters.get(i);
 
-                    response += JsonResponses.formingMiddleOfGetUserCoordinatorsResponse(meter.getId(), meter.getName(), meter.getZbLongAddr(), meter.getZbShortAddr(), 
-                                                                                         meter.getStatus(), meter.getCreatedAt(), meter.getLastSeen());
+                    response += JsonResponses.formingMiddleOfGetUserCoordinatorsResponse(meter.getId(), meter.getName(), coordinator.getMac(), meter.getZbLongAddr(), 
+                                                                                         meter.getZbShortAddr(), meter.getStatus(), meter.getCreatedAt(), meter.getLastSeen());
                 }
                 response = JsonResponses.formingEndOfGetCoordinatorResponse(response);
-                
+                // logger.info("Response: {}", response);
+
                 return HttpResponse.ok(response, ContentTypes.JSON);
             }
         } catch (SQLException e) {
@@ -161,7 +176,7 @@ public class CoordinatorController {
         try {
             CoordinatorDAO coordinatorDAO = new CoordinatorDAO();
             Coordinator    coordinator    = coordinatorDAO.getCoordinator(coordinatorId);
-            boolean        connected      = emulateConnection();
+            boolean        connected      = checkConnectionToCoordinatorOnUart(coordinator.getMac());
 
             if (!coordinatorDAO.coordinatorBelongsToUser(coordinatorId, userId)) {
                 return HttpResponse.unauthorized(JsonResponses.formingUniversalResponse(false, "Access denied"));
@@ -172,8 +187,8 @@ public class CoordinatorController {
                 MeterDAO meterDAO  = new MeterDAO();
                 List<Meter> meters = meterDAO.getMetersByCoordinator(coordinatorId);
                 
-                String response = JsonResponses.formingStartOfConnectionToCoordinatorResponse(coordinator.getId(), coordinator.getName(), coordinator.getIp(), coordinator.getPort(), 
-                                                                                              DeviseStatuses.ONLINE, coordinator.getCreatedAt(), coordinator.getLastSeen());
+                String response = JsonResponses.formingStartOfConnectionToCoordinatorResponse(coordinator.getId(), coordinator.getName(), coordinator.getMac(), coordinator.getIp(), 
+                                                                                              coordinator.getPort(), DeviseStatuses.ONLINE, coordinator.getCreatedAt(), coordinator.getLastSeen());
                 for (int i = 0; i < meters.size(); i++) {
                     Meter meter = meters.get(i);
 
@@ -193,11 +208,15 @@ public class CoordinatorController {
         }
     }
     
-    // Всегда успешная эмуляция установки соединения с координатером
-    private static boolean emulateConnection() {
+    // Возвращает true, если известен серверу com-порт, на котором висит координатор с mac-адресом macAddress, иначе - false 
+    private static boolean checkConnectionToCoordinatorOnUart(String macAddress) {
         try {
             Thread.sleep(1000);
-            return true;
+
+            String portName = UartUtil.getCommPortByMacAddress(macAddress);
+            
+            return portName != null;
+
         } catch (InterruptedException e) {
             return false;
         }
