@@ -25,7 +25,7 @@ public class DataBaseFildNames {
         public class Meter {
             public static final String ID              = "id";
             public static final String COORDINATOR_ID  = "coordinator_id";
-            public static final String ZB_LONG_ADDR    = "zb_zong_addr";
+            public static final String ZB_LONG_ADDR    = "zb_long_addr";
             public static final String ZB_SHORT_ADDR   = "zb_short_addr";
             public static final String NAME            = "name";
             public static final String STATUS          = "status";

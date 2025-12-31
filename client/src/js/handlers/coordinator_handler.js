@@ -4,6 +4,102 @@ class CoordinatorHandler {
         this.numberCoords = null;
     }
 
+    // Добавляет к строке html блок с разметкой об информации о координаторе coordinator и возвращает её
+    addedCoordinatorToPage(html, coordinator) {
+        return html + `
+            <div class="coordinator-item-block" id="coordinator${coordinator.id}">
+                <div class="coordinator"></div>
+                <div class="coordinator-info">
+                    <p><strong>Имя:    </strong><text class="coordinator-name ${coordinator.status}"   id="coordinator-name${coordinator.id}"> ${coordinator.name}                               </text></p>
+                    <p><strong>MAC:    </strong><text class="coordinator-mac ${coordinator.status}"    id="coordinator-mac${coordinator.id}">  ${coordinator.mac}                                </text></p>
+                    <p><strong>Адрес:  </strong><text class="coordinator-addr ${coordinator.status}"   id="coordinator-addr${coordinator.id}"> ${coordinator.ip}:${coordinator.port}             </text></p>
+                    <p><strong>Статус: </strong><text class="coordinator-status ${coordinator.status}" id="coordinator-status${coordinator.id}">${coordinator.status=='online'?'online':'offline'}</text></p>
+                </div>
+                <div class="coordinator-actions">
+                    <button class="btn menu-item coordinator-action button-connect" id="buttonConnect${coordinator.id}">
+                        <i class="fas fa-plug"></i>
+                    </button>
+                    <button class="btn menu-item coordinator-action button-info"    id="buttonInfo${coordinator.id}" ${coordinator.status=='online'?'':'disabled'}>
+                        <i class="fas fa-info-circle"></i>
+                    </button>
+                    <button class="btn menu-item coordinator-action button-delete"  id="buttonDelete${coordinator.id}">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    // Добавляет к строке html блок с разметкой об информации о приборе учёта meter и возвращает её
+    addedMeterToPage(html, meter) {
+        return html + `
+            <div class="meter-item-block" id="meter${meter.id}">
+                <div class="meter"></div>
+                <div class="meter-info">
+                    <p><strong>Имя:                  </strong><text class="meter-name      ${meter.status}" id="meter-name${meter.id}      "> ${meter.name}                               </text></p>
+                    <p><strong>Long-адрес:           </strong><text class="meter-mac       ${meter.status}" id="meter-long-addr${meter.id} "> ${meter.zb_long_addr}                       </text></p>
+                    <p><strong>Short-адрес:          </strong><text class="meter-addr      ${meter.status}" id="meter-short-addr${meter.id}"> 0x${meter.zb_short_addr}                    </text></p>
+                    <p><strong>Статус:               </strong><text class="meter-status    ${meter.status}" id="meter-status${meter.id}    "> ${meter.status=='online'?'online':'offline'}</text></p>
+                    <p><strong>Создан:               </strong><text class="meter-create-at ${meter.status}" id="meter-create-at${meter.id} "> ${meter.created_at}                         </text></p>
+                    <p><strong>Последняя активность: </strong><text class="meter-last-seen ${meter.status}" id="meter-last-seen${meter.id} "> ${meter.last_seen}                          </text></p>
+                </div>
+                <div class="meter-data">
+                    <p><strong>Напряжение (В):             </strong><text class="meter-voltage         ${meter.status}" id="meter-voltage${meter.id}         "> ${meter.voltage}        </text></p>
+                    <p><strong>Ток (A):                    </strong><text class="meter-current         ${meter.status}" id="meter-current${meter.id}         "> ${meter.current}        </text></p>
+                    <p><strong>Мощность активная (кВт):    </strong><text class="meter-active-power    ${meter.status}" id="meter-active-power${meter.id}    "> ${meter.active_power}   </text></p>
+                    <p><strong>Мощность реактивная (кВар): </strong><text class="meter-reactive-power  ${meter.status}" id="meter-reactive-power${meter.id}  "> ${meter.reactive_power} </text></p>
+                    <p><strong>Мощность (кВ*А):            </strong><text class="meter-apparent-power  ${meter.status}" id="meter-apparent-power${meter.id}  "> ${meter.apparent_power} </text></p>
+                    <p><strong>Коэффициент мощности (-):   </strong><text class="meter-power-factor    ${meter.status}" id="meter-power-factor${meter.id}    "> ${meter.power_factor}   </text></p>
+                    <p><strong>Частота (Гц):               </strong><text class="meter-frequency       ${meter.status}" id="meter-frequency${meter.id}       "> ${meter.frequency}      </text></p>
+                    <p><strong>Ток нулевого провода (A):   </strong><text class="meter-neutral-current ${meter.status}" id="meter-neutral-current${meter.id} "> ${meter.neutral_current}</text></p>
+                </div>
+                <div class="meter-actions">
+                    <button class="btn menu-item meter-action button-seen" id="buttonSeen${meter.id}">
+                        <i class="fas fa-plug"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    // Добавляет мониторинг нажатий на кнопки координаторов
+    setEventsToCoordinatorsButtons() {
+        const deleteButtons = document.querySelectorAll('.button-delete');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', async () => {
+                await this.deleteCoordinator(button.id.replace('buttonDelete', ''));
+                this.pageHandler.showUserProfile();
+            });
+        });
+        
+        const connectButtons = document.querySelectorAll('.button-connect');
+        connectButtons.forEach(button => {
+            button.addEventListener('click', async () => {
+                await this.connectToCoordinator(button.id.replace('buttonConnect', ''));
+                this.pageHandler.showUserProfile();
+            });
+        });
+
+        const infoButtons = document.querySelectorAll('.button-info');
+        infoButtons.forEach(button => {
+            button.addEventListener('click', async () => {
+                await this.getCordinatorDetails(button.id.replace('buttonInfo', ''));
+                this.pageHandler.showCoordinatorInfo();
+            });
+        });
+    }
+
+    // Добавляет мониторинг нажатий на кнопки приборов учёта
+    setEventsToMetersButtons() {
+        const seenButtons = document.querySelectorAll('.button-seen');
+        seenButtons.forEach(button => {
+            button.addEventListener('click', async () => {
+                console.log("asked metter")
+            });
+        });
+    }
+    
+    // Получает от сервера информацию о доступных пользователю координаторах и добавляет в html разметку блоки, описывающие их
     async getUserCoordinators() {
         try {
             const response = await CoordinatorAPI.getCoordinators();
@@ -26,53 +122,11 @@ class CoordinatorHandler {
                     let html = '';
                     for (let i = 0; i < this.numberCoords; i++) {
                         const coordinator = response.data[i];
-                        html += `
-                            <div class="coordinator-item-block" id="coordinator${coordinator.id}">
-                                <div class="coordinator"></div>
-                                <div class="coordinator-info">
-                                    <p><strong>Имя:    </strong><text class="coordinator-name ${coordinator.status}"   id="coordinator-name${coordinator.id}"> ${coordinator.name}                               </text></p>
-                                    <p><strong>MAC:    </strong><text class="coordinator-mac ${coordinator.status}"    id="coordinator-mac${coordinator.id}">  ${coordinator.mac}                                </text></p>
-                                    <p><strong>Адрес:  </strong><text class="coordinator-addr ${coordinator.status}"   id="coordinator-addr${coordinator.id}"> ${coordinator.ip}:${coordinator.port}             </text></p>
-                                    <p><strong>Статус: </strong><text class="coordinator-status ${coordinator.status}" id="coordinator-status${coordinator.id}">${coordinator.status=='online'?'online':'offline'}</text></p>
-                                </div>
-                                <div class="coordinator-actions">
-                                    <button class="btn menu-item coordinator-action button-connect" id="buttonConnect${coordinator.id}">
-                                        <i class="fas fa-plug"></i>
-                                    </button>
-                                    <button class="btn menu-item coordinator-action button-info"    id="buttonInfo${coordinator.id}" ${coordinator.status=='online'?'':'disabled'}>
-                                        <i class="fas fa-info-circle"></i>
-                                    </button>
-                                    <button class="btn menu-item coordinator-action button-delete"  id="buttonDelete${coordinator.id}">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        `;
+                        html = this.addedCoordinatorToPage(html, coordinator);
                     }
                     listContainer.innerHTML = html;
-                    
-                    const deleteButtons = document.querySelectorAll('.button-delete');
-                    deleteButtons.forEach(button => {
-                        button.addEventListener('click', async () => {
-                            await this.deleteCoordinator(button.id.replace('buttonDelete', ''));
-                            this.pageHandler.showUserProfile();
-                        });
-                    });
-                    
-                    const connectButtons = document.querySelectorAll('.button-connect');
-                    connectButtons.forEach(button => {
-                        button.addEventListener('click', async () => {
-                            await this.connectToCoordinator(button.id.replace('buttonConnect', ''));
-                            this.pageHandler.showUserProfile();
-                        });
-                    });
 
-                    const infoButtons = document.querySelectorAll('.button-info');
-                    infoButtons.forEach(button => {
-                        button.addEventListener('click', async () => {
-                            this.pageHandler.showCoordinatorInfo();
-                        });
-                    });
+                    this.setEventsToCoordinatorsButtons();
 
                     return true;
                 }
@@ -85,6 +139,7 @@ class CoordinatorHandler {
         }
     }
 
+    // Отправляет на сервер запрос на создание координатора с заданными параметра
     async createNewCoordinator() {
         const coordinatorData = {
             name: document.getElementById('coordinatorName').value,
@@ -113,6 +168,7 @@ class CoordinatorHandler {
         } 
     }
 
+    // Отправляет на сервер запрос на удоление координатора с id coordinatorId
     async deleteCoordinator(coordinatorId) {
         try {
             const response = await CoordinatorAPI.deleteCoordinator(coordinatorId);
@@ -134,6 +190,7 @@ class CoordinatorHandler {
         } 
     }
 
+    // Отправляет на сервер запрос о доступности координатора с id coordinatorId
     async connectToCoordinator(coordinatorId) {
         try {
             const response = await CoordinatorAPI.connectToCoordinator(coordinatorId);
@@ -155,6 +212,72 @@ class CoordinatorHandler {
         } 
     }
 
+    // Отправляет на сервер запрос о параметрах координатора с id coordinatorId
+    async getCordinatorDetails(coordinatorId) {
+        try {
+            const response = await CoordinatorAPI.getCoordinatorDetails(coordinatorId);
+            if (response.success) {
+                document.getElementById('coordinatorInfoId').textContent        = response.data.coordinator.id;
+                document.getElementById('coordinatorInfoName').textContent      = response.data.coordinator.name;
+                document.getElementById('coordinatorInfoMac').textContent       = response.data.coordinator.mac;
+                document.getElementById('coordinatorInfoIp').textContent        = response.data.coordinator.ip + ":" + response.data.coordinator.port;
+                document.getElementById('coordinatorInfoStatus').textContent    = response.data.coordinator.status;
+                document.getElementById('coordinatorInfoCreatedAt').textContent = response.data.coordinator.created_at;
+                document.getElementById('coordinatorInfoLastSeen').textContent  = response.data.coordinator.last_seen;
+
+                const numberMeters = response.data.meters.length;
+                if (numberMeters > 0) {
+                    let html = '';  
+                    for (let i = 0; i < numberMeters; i++) {
+                        const meter = response.data.meters[i];
+                        html = this.addedMeterToPage(html, meter);
+                    }
+                    const listContainer = document.getElementById('metersList');
+                    listContainer.innerHTML = html;
+
+                    this.setEventsToMetersButtons();
+                }
+
+                return true;
+            } else {
+                this.pageHandler.showMessage(response.message || 'Не удалось получить информацию о сети', 'error');
+            
+                return false
+            }
+        }catch (error) {
+            console.error('Coordinator deleted error:', error);
+            this.pageHandler.showMessage('Ошибка при подключении к сети', 'error');
+        
+            return false;
+        } 
+    }
+
+    async sendCommandToCoordinator() {
+        try {
+            const commandCode   = document.getElementById("commantToCoord").value;
+            const parameters    = document.getElementById("commandParams").value;
+            const coordinatorId = document.getElementById("coordinatorInfoId").textContent;
+        
+            const response = await CoordinatorAPI.sendCommand(coordinatorId, commandCode, parameters);
+            this.pageHandler.showMessage('Ответ получен', 'success');
+            if (response.success) {
+                console.log(response);
+
+                return true;
+            } else {
+                this.pageHandler.showMessage(response.message || 'Не удолось отправить запрос', 'error');
+            
+                return false
+            }
+        }catch (error) {
+            console.error('Send command error:', error);
+            this.pageHandler.showMessage('Не удолось отправить запрос', 'error');
+        
+            return false;
+        } 
+    }
+
+    // Возвращает количесво координаторов, доступных пользователю
     getNumberOfCoordinators() {
         return this.numberCoords;
     }

@@ -189,4 +189,12 @@ public class JsonResponses {
             return response.substring(0, response.length() - 1) + "]}}";
         }
     }
+
+    public static String formingCoordinatorCommandSuccessResponse(int coordinatorId, byte commandCode, byte[] commandParams) {
+        return "{\"success\":true,\"data\":{" +
+                    "\"id\":"                   + coordinatorId + "," +
+                    "\"command_code\":\""       + commandCode   + "\"," +
+                    "\"command_parameters\":\"" + commandParams + "\"" +
+                "}}";
+    }
 }

@@ -1,6 +1,6 @@
 package com.energy.monitoring.utils;
 
-/* Инструменты для подсчёта контрольной суммы типа CRC-8/SMBU */
+/* Инструменты для подсчёта контрольной суммы типа CRC-8/SMBUS */
 public class CrcUtil {
     // Таблица промежуточных остатков
     private static final byte[] CRC_TABLE = {

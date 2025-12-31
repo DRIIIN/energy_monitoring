@@ -92,6 +92,10 @@ class PageHandler {
             this.uiHandler.toggleUserMenu();
         });
 
+        document.getElementById('sendCommandToCoordinator')?.addEventListener('click', () => {
+            this.coordinatorHandler.sendCommandToCoordinator();
+        });
+
         document.addEventListener('click', (e) => {
             const userMenu       = document.getElementById('userMenuDropdown');
             const userMenuButton = document.getElementById('userMenuButton');

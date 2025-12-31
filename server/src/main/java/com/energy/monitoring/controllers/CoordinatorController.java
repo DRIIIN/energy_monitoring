@@ -1,6 +1,7 @@
 package com.energy.monitoring.controllers;
 
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -39,14 +40,20 @@ public class CoordinatorController {
                 int coordinatorId = getCoordinatorIdFromEndPoint(endPoint);
                 final String coordinatorEndPoint = EndPoints.COORDINATOR + coordinatorId;
                 final String connectEndPoint     = EndPoints.COORDINATOR + coordinatorId + EndPoints.CONNECT;
+                final String commandEndPoint     = EndPoints.COORDINATOR + coordinatorId + EndPoints.COMMAND;
+
 
                 // logger.info(connectEndPoint + " " + endPoint + " " + coordinatorId);
                 return switch (method) {
                     case Methods.POST -> {
                         if (endPoint.equals(EndPoints.COORDINATORS)) {
                             yield handlerCreateCoordinator(request, userId);
-                        } else if (endPoint.equals(connectEndPoint)) {
+                        } else 
+                        if (endPoint.equals(connectEndPoint)) {
                             yield handlerConnectionToCoordinator(userId, coordinatorId);
+                        } else
+                        if (endPoint.equals(commandEndPoint)) {
+                            yield handlerCommandToCoordinator(request, coordinatorId);
                         } else {
                             yield HttpResponse.notFound(JsonResponses.formingUniversalResponse(false, "Coordinators endpoint not found"));
                         }
@@ -54,7 +61,8 @@ public class CoordinatorController {
                     case Methods.GET -> {
                         if (endPoint.equals(EndPoints.COORDINATORS)) {
                             yield handlerGetUserCoordinators(userId);
-                        } else if (endPoint.equals(coordinatorEndPoint)) {
+                        } else 
+                        if (endPoint.equals(coordinatorEndPoint)) {
                             yield handlerGetCoordinator(userId, coordinatorId);
                         } else {
                             yield HttpResponse.notFound(JsonResponses.formingUniversalResponse(false, "Coordinators endpoint not found"));
@@ -81,7 +89,7 @@ public class CoordinatorController {
     private static int getCoordinatorIdFromEndPoint(String endPoint) {
         String[] parts = endPoint.split("/");
         
-        if ((parts.length == 4 && parts[2].equals("coordinators")) || (parts.length == 5 && parts[4].equals("connect"))) {
+        if ((parts.length == 4 && parts[2].equals("coordinators")) || (parts.length == 5 && (parts[4].equals("connect") || parts[4].equals("command")))) {
             return Integer.parseInt(parts[3]);
         } else {
             return 0;
@@ -232,9 +240,45 @@ public class CoordinatorController {
             } else {
                 coordinatorDAO.deleteCoordinator(coordinatorId);
 
-                return HttpResponse.ok(JsonResponses.formingUniversalResponse(true, "Coordinator deleted"), "application/json");
+                return HttpResponse.ok(JsonResponses.formingUniversalResponse(true, "Coordinator deleted"), ContentTypes.JSON);
             }
             
+        } catch (SQLException e) {
+            return HttpResponse.error(HttpStatusCodes.INTERNAL_SERVER_ERROR, JsonResponses.formingUniversalResponse(false, "Database error: " + e.getMessage()));
+        }
+    }
+
+    // Возвращает строку string в виде набота байт
+    private static byte[] convertStringToBytes(String string) {
+        // logger.info("len: {}", string.length());
+        int len = string.length();
+        if (len > 0 && len % 2 == 0) {
+            byte[] bytes = new byte[len / 2];
+            for (int i = 0; i < len; i += 2) {
+                bytes[i / 2] = (byte) Integer.parseInt(string.substring(i, i + 2), 16);
+            }
+
+            return bytes;
+        } else {
+            return null;
+        }
+    }
+
+    // Формирует ответ на http-запрос отправки команды координатору с id coordinatorId
+    private static HttpResponse handlerCommandToCoordinator(HttpRequest request, int coordinatorId) {
+        try {
+            String body          = request.getBody();
+            byte commandCode     = convertStringToBytes(JsonResponses.extractFromJson(body, JsonBlocks.COMMAND))[0];
+            String commandParams = JsonResponses.extractFromJson(body, JsonBlocks.PARAMETERS);
+            byte[] byteParameters = commandParams != null && commandParams.length() > 0 ? convertStringToBytes(commandParams) : null;
+
+            CoordinatorDAO coordinatorDAO = new CoordinatorDAO();
+            Coordinator    coordinator    = coordinatorDAO.getCoordinator(coordinatorId);
+            String         macAddress     = coordinator.getMac();
+
+            byte[] response = UartUtil.sendCommandToCoordinator(macAddress, commandCode, byteParameters);
+            
+            return HttpResponse.ok(JsonResponses.formingCoordinatorCommandSuccessResponse(coordinatorId, response[0], Arrays.copyOfRange(response, 1, response.length)), ContentTypes.JSON);
         } catch (SQLException e) {
             return HttpResponse.error(HttpStatusCodes.INTERNAL_SERVER_ERROR, JsonResponses.formingUniversalResponse(false, "Database error: " + e.getMessage()));
         }

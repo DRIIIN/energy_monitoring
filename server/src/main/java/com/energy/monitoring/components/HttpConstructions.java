@@ -20,6 +20,7 @@ public class HttpConstructions {
         public static final String COORDINATORS    = "/api/coordinators";
         public static final String COORDINATOR     = "/api/coordinators/";
         public static final String CONNECT         = "/connect";
+        public static final String COMMAND         = "/command";
     }
 
     public class Methods {
@@ -42,6 +43,8 @@ public class HttpConstructions {
         public static final String NAME           = "name";
         public static final String PORT           = "port";
         public static final String MAC            = "mac";
+        public static final String COMMAND        = "command";
+        public static final String PARAMETERS     = "parameters";
 
     }
 

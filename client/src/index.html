@@ -259,7 +259,7 @@
                             <div class="coordinators-info">
                                 <h3><i class="fas fa-network-wired"></i> Доступные сети</h3>
                                 <div class="coordinators-list" id="coordinatorsList">
-                                    
+                                    <p>Нет добавленных координаторов</p>
                                 </div>
                                 <button class="btn btn-primary" id="openAddCoordinatorFormButton">
                                     <i class="fas fa-plus"></i> Добавить сеть
@@ -305,10 +305,13 @@
                         <div class="card-body">
                             <div class="modal" id="coordinatorInfoModal">
                                 <div class="modal-content">
-                                    <h2><i class="fas fa-network-wired"></i> Информайия о сети: <text class="coordinatro-info-name" id="coordinatorInfoName">Загрузка...</text></h2>
+                                    <h2>
+                                        <i class="fas fa-network-wired"></i>Информайия о сети <text class="coordinatro-info-name" id="coordinatorInfoName">Загрузка...</text>
+                                        (id<text class="coordinatro-info-name" id="coordinatorInfoId">Загрузка...</text>)
+                                    </h2>
                                     <form id="coordinatorInfoForm">
                                         <div class="coordinator-info-block coordinator">
-                                            <h3><i class="fas fa-plus-circle"></i> Координатор</h3>
+                                            <h3><i class="fas fa-cogs"></i> Координатор</h3>
                                             <p><strong>MAC-Адрес:            </strong> <text class="coordinatro-info-mac"        id="coordinatorInfoMac">      Загрузка...</text></p>
                                             <p><strong>IP-Адрес:             </strong> <text class="coordinatro-info-ip"         id="coordinatorInfoIp">       Загрузка...</text></p>
                                             <p><strong>Статус:               </strong> <text class="coordinatro-info-status"     id="coordinatorInfoStatus">   Загрузка...</text></p>
@@ -316,39 +319,39 @@
                                             <p><strong>Последняя активность: </strong> <text class="coordinatro-info-last-seen"  id="coordinatorInfoLastSeen"> Загрузка...</text></p>
                                         </div>
                                         <div class="coordinator-info-block comands">
-                                            <h3><i class="fas fa-plus-circle"></i> Отправить команду</h3>
+                                            <h3><i class="fas fa-paper-plane"></i> Отправить команду</h3>
                                             <div class="form-group">
-                                                <label for="commant-to-coord">Команда:</label>
-                                                <select id="commant-to-coord">  
-                                                    <option value="0x00">Открытие сессии</option>  
-                                                    <option value="0x01">Установка кастомного MAC-адреса узлу</option>  
-                                                    <option value="0x05">Изгнание узла из сети</option>  
-                                                    <option value="0x06">Перезагрузка узла</option>
-                                                    <option value="0x07">Получение списка активных узлов в сети</option>
-                                                    <option value="0x08">Разрешить/запретить подключение новых узлов</option>
-                                                    <option value="0x09">Получение основной информации о сети</option>
-                                                    <option value="0x0B">Пересоздание сети на случайном канале</option>
-                                                    <option value="0x0C">Получение перечня подключавшихся к сети узлов</option>
-                                                    <option value="0x19">Получение версии прошивки узла</option>
-                                                    <option value="0x1A">Загрузка обновления для узла</option>
-                                                    <option value="0x1B">Отправка обновления узлу</option>
-                                                    <option value="0x23">Пересоздание сети на заданном канале</option>
-                                                    <option value="0xAB">Отправка ПИРС-запросов на прибор учёта</option>
-                                                    <option value="0xDB">Установка отладочного режима узла</option>
-                                                    <option value="0xFF">Закрытие сессии</option>
+                                                <label for="commantToCoord">Команда:</label>
+                                                <select id="commantToCoord">  
+                                                    <option value="00">Открытие сессии</option>  
+                                                    <option value="01">Установка кастомного MAC-адреса узлу</option>  
+                                                    <option value="05">Изгнание узла из сети</option>  
+                                                    <option value="06">Перезагрузка узла</option>
+                                                    <option value="07">Получение списка активных узлов в сети</option>
+                                                    <option value="08">Разрешить/запретить подключение новых узлов</option>
+                                                    <option value="09">Получение основной информации о сети</option>
+                                                    <option value="0B">Пересоздание сети на случайном канале</option>
+                                                    <option value="0C">Получение перечня подключавшихся к сети узлов</option>
+                                                    <option value="19">Получение версии прошивки узла</option>
+                                                    <option value="1A">Загрузка обновления для узла</option>
+                                                    <option value="1B">Отправка обновления узлу</option>
+                                                    <option value="23">Пересоздание сети на заданном канале</option>
+                                                    <option value="AB">Отправка ПИРС-запросов на прибор учёта</option>
+                                                    <option value="DB">Установка отладочного режима узла</option>
+                                                    <option value="FF">Закрытие сессии</option>
                                                 </select>  
                                             </div>
                                             <div class="form-group">
-                                                <label for="command-params">Параметры:</label>
-                                                <input type="text" id="command-params">  
+                                                <label for="commandParams">Параметры:</label>
+                                                <input type="text" id="commandParams">  
                                             </div>
-                                            <button type="button" class="btn btn-outline-primary">Отправить</button>  
+                                            <button type="button" class="btn btn-outline-primary" id="sendCommandToCoordinator">Отправить</button>  
                                         </div>
                                         <div class="coordinator-info-block response">
-                                            <h3><i class="fas fa-plus-circle"></i> Ответ на команду</h3>
+                                            <h3><i class="fas fa-commenting"></i> Ответ на команду</h3>
                                         </div>
                                         <div class="coordinator-info-block meters">
-                                            <h3><i class="fas fa-plus-circle"></i> Приборы учёта</h3>
+                                            <h3><i class="fas fa-calculator"></i> Приборы учёта</h3>
                                             <div class="meters-list" id="metersList">
                                                 <p>Нет доступных приборов учёта</p>
                                             </div>

@@ -1,5 +1,7 @@
 package com.energy.monitoring.utils;
 
+import java.util.Arrays;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,8 +26,10 @@ public class UartUtil {
     }
 
     // Отправляет запрос c кодом commandCode и параметрами parameters на коорданатор с mac-адресом macAddress и возвращает ответ
-    public static byte[] sendCommandToCoordinator(String macAddress, int commandCode, byte[] parameters) {
+    public static byte[] sendCommandToCoordinator(String macAddress, byte commandCode, byte[] parameters) {
+        logger.info("sendCommandToCoordinator");
         String portNumber = getCommPortByMacAddress(macAddress);
+        logger.info("{}", portNumber);
         if (portNumber == null) {
             logger.error("Port with devise {} not founded", macAddress);
 
@@ -38,18 +42,22 @@ public class UartUtil {
         serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING, Config.getInt(ConfigKeys.Uart.RESPONSE_TIMEOUT), 0);
 
         if (serialPort.openPort()) {
-            logger.info("Serial port opened successfully");
+            logger.info("Serial port {} with {} opened successfully", portNumber, macAddress);
 
             byte[] request = CommandsUtil.createRequest(commandCode, parameters);
-
-            logger.info("Write request to {}: {}", macAddress, request);
             serialPort.writeBytes(request, request.length);
+            logger.info("Write request to {}: {}", macAddress, request);
 
             byte[] response = new byte[Config.getInt(ConfigKeys.Uart.MAX_LEN)];
             int responseLen = serialPort.readBytes(response, response.length);
+            response = Arrays.copyOfRange(response, 0, responseLen);
+            logger.info("Read respons from {}: {}", macAddress, response);
+
+            serialPort.closePort();
+            logger.info("Port {} with {} closed successfully", portNumber, macAddress);
 
             if (responseLen > 0) {
-                logger.info("Read response wrom {}: {}", macAddress, response);
+                // logger.info("Parsed response: {}", CommandsUtil.parseResponse(response));
 
                 return CommandsUtil.parseResponse(response);
             } else {
