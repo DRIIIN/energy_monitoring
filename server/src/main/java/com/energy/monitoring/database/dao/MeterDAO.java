@@ -18,15 +18,15 @@ import com.energy.monitoring.models.Meter;
 public class MeterDAO {
     public Meter createMeter(int coordinatorId, String zbLongAddr, short zbShortAddr, String name) throws SQLException {
         String sql = SqlRequests.Meter.CREATE_METER;
-        
+
         try (Connection connection = JDBC.getConnection();
             PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            
+
             stmt.setInt   (1, coordinatorId);
             stmt.setString(2, zbLongAddr);
             stmt.setInt   (3, zbShortAddr);
             stmt.setString(4, name);
-            stmt.setString(5, "offline");
+            stmt.setString(5, "online");
             
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {

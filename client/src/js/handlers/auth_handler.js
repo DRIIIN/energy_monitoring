@@ -1,3 +1,4 @@
+/* Класс с методами обработки процессов автаризации */
 class AuthHandler {
     constructor(pageHandler) {
         this.pageHandler = pageHandler;

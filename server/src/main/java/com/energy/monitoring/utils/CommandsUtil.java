@@ -24,10 +24,22 @@ public class CommandsUtil {
 
     // Принимает ответ от координатора response и возвращает набор байт, где первый - код команды, на которую был ответ, а затем все параметры 
     public static byte[] parseResponse(byte[] response) {
-        if (response.length >= 5) {
-            byte[] message = new byte[response.length - 4];
-            message[0] = response[2];
-            System.arraycopy(response, 4, message, 1, response.length - 5);
+        final int MIN_LENGTH_OF_CORRECT_MESSAGE = 5;
+        if (response.length >= MIN_LENGTH_OF_CORRECT_MESSAGE) {
+            byte[] message;
+            if (response[2] != 7) {
+                message = new byte[response.length - 4];
+                message[0] = response[2];
+                System.arraycopy(response, 4, message, 1, response.length - 5);
+            } else {
+                final int LEN_OF_ONE_UNSWER = 13;
+                int numberOfMeters = response.length / 18;
+                message = new byte[1 + LEN_OF_ONE_UNSWER * numberOfMeters];
+                message[0] = response[2];
+                for (int i = 0; i < numberOfMeters; i++) {
+                    System.arraycopy(response, 4 + (LEN_OF_ONE_UNSWER + MIN_LENGTH_OF_CORRECT_MESSAGE) * i, message, LEN_OF_ONE_UNSWER * i + 1, LEN_OF_ONE_UNSWER);
+                }
+            }
 
             return message;
         }

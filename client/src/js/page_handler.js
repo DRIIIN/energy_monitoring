@@ -4,6 +4,7 @@ class PageHandler {
     constructor() {
         this.authHandler        = null;
         this.coordinatorHandler = null;
+        this.routTableHandler   = null;
         this.uiHandler          = null;
         this.currentUser        = null;
         
@@ -15,7 +16,9 @@ class PageHandler {
         
         this.uiHandler          = new UIHandler(this);
         this.authHandler        = new AuthHandler(this);
-        this.coordinatorHandler = new CoordinatorHandler(this)
+        this.meterHandler       = new MeterHandler(this);
+        this.routTableHandler   = new RouteTableHandler();
+        this.coordinatorHandler = new CoordinatorHandler(this, this.routTableHandler, this.meterHandler);
         
                 
         await this.authHandler.checkAuth()
@@ -93,6 +96,7 @@ class PageHandler {
         });
 
         document.getElementById('sendCommandToCoordinator')?.addEventListener('click', () => {
+            document.getElementById("coordinatorResponse").innerHTML = `<p>Ответ ещё не был получен</p>`;
             this.coordinatorHandler.sendCommandToCoordinator();
         });
 

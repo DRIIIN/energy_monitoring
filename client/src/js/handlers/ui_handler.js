@@ -1,3 +1,4 @@
+/* Класс с меторами обработки графического интерфейса */
 class UIHandler {
     constructor(pageHandler) {
         this.pageHandler = pageHandler;

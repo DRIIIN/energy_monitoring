@@ -310,16 +310,16 @@
                                         (id<text class="coordinatro-info-name" id="coordinatorInfoId">Загрузка...</text>)
                                     </h2>
                                     <form id="coordinatorInfoForm">
+                                        <h3><i class="fas fa-cogs"></i> Координатор</h3>
                                         <div class="coordinator-info-block coordinator">
-                                            <h3><i class="fas fa-cogs"></i> Координатор</h3>
                                             <p><strong>MAC-Адрес:            </strong> <text class="coordinatro-info-mac"        id="coordinatorInfoMac">      Загрузка...</text></p>
                                             <p><strong>IP-Адрес:             </strong> <text class="coordinatro-info-ip"         id="coordinatorInfoIp">       Загрузка...</text></p>
                                             <p><strong>Статус:               </strong> <text class="coordinatro-info-status"     id="coordinatorInfoStatus">   Загрузка...</text></p>
                                             <p><strong>Дата создание:        </strong> <text class="coordinatro-info-created-at" id="coordinatorInfoCreatedAt">Загрузка...</text></p>
                                             <p><strong>Последняя активность: </strong> <text class="coordinatro-info-last-seen"  id="coordinatorInfoLastSeen"> Загрузка...</text></p>
                                         </div>
+                                        <h3><i class="fas fa-paper-plane"></i> Отправить команду</h3>
                                         <div class="coordinator-info-block comands">
-                                            <h3><i class="fas fa-paper-plane"></i> Отправить команду</h3>
                                             <div class="form-group">
                                                 <label for="commantToCoord">Команда:</label>
                                                 <select id="commantToCoord">  
@@ -336,6 +336,7 @@
                                                     <option value="1A">Загрузка обновления для узла</option>
                                                     <option value="1B">Отправка обновления узлу</option>
                                                     <option value="23">Пересоздание сети на заданном канале</option>
+                                                    <option value="A2">Получение маршрутов в сети</option>
                                                     <option value="AB">Отправка ПИРС-запросов на прибор учёта</option>
                                                     <option value="DB">Установка отладочного режима узла</option>
                                                     <option value="FF">Закрытие сессии</option>
@@ -347,14 +348,17 @@
                                             </div>
                                             <button type="button" class="btn btn-outline-primary" id="sendCommandToCoordinator">Отправить</button>  
                                         </div>
-                                        <div class="coordinator-info-block response">
-                                            <h3><i class="fas fa-commenting"></i> Ответ на команду</h3>
+                                        <h3><i class="fas fa-commenting"></i> Ответ на команду</h3>
+                                        <div class="coordinator-info-block response" id="coordinatorResponse">
+                                            <p>Ответ ещё не был получен</p>
                                         </div>
-                                        <div class="coordinator-info-block meters">
-                                            <h3><i class="fas fa-calculator"></i> Приборы учёта</h3>
-                                            <div class="meters-list" id="metersList">
-                                                <p>Нет доступных приборов учёта</p>
-                                            </div>
+                                        <h3><i class="fas fa-table"></i> Карта маршрутов</h3>
+                                        <div class="coordinator-info-block route_map" id="routeMap">
+                                            <p>Данные о маршрутах ещё не были получены</p>
+                                        </div>
+                                        <h3><i class="fas fa-calculator"></i> Приборы учёта</h3>
+                                        <div class="meters-list" id="metersList">
+                                            <p>Нет доступных приборов учёта</p>
                                         </div>
                                         <div class="form-actions">
                                             <button type="button" class="btn btn-outline-primary" id="cancelCoordinatorInfo">Отмена</button>
@@ -377,8 +381,11 @@
     <script src="js/api/request_api.js"></script>
     <script src="js/api/user_api.js"></script>
     <script src="js/api/coordinator_api.js"></script>
+    <script src="js/api/meter_api.js"></script>
     <script src="js/handlers/auth_handler.js"></script>
+    <script src="js/handlers/route_table_handler.js"></script>
     <script src="js/handlers/coordinator_handler.js"></script>
+    <script src="js/handlers/meter_handler.js"></script>
     <script src="js/handlers/ui_handler.js"></script>
     <script src="js/page_handler.js"></script>
 </body>

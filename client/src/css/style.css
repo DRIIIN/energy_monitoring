@@ -854,6 +854,10 @@ select.form-control {
     display: inline;
 }
 
+.menu-item.meter-action {
+    background-color: var(--gray-300);
+}
+
 .menu-divider {
     height: 1px;
     background-color: var(--gray-300);
@@ -887,6 +891,16 @@ select.form-control {
 .user-profile-info p {
     margin-bottom: 0.5rem;
 }
+.meter-item-block {
+    background-color: var(--gray-100);
+    padding: var(--spacing);
+    border-radius: var(--border-radius);
+    margin: var(--spacing) 0;
+}
+
+.meter-item-block p {
+    margin-bottom: 0.2rem;
+}
 
 .coordinator-item-block {
     background-color: var(--gray-100);
@@ -898,6 +912,7 @@ select.form-control {
 .coordinator-item-block p {
     margin-bottom: 0.2rem;
 }
+
 
 .coordinator-info-block {
     background-color: var(--gray-100);
@@ -915,6 +930,22 @@ select.form-control {
 }
 
 .coordinator-status.offline {
+    color: var(--danger-color);
+}
+
+.coordinatro-info-status {
+    color: var(--success-color);
+}
+
+.coordinatro-info-status.offline {
+    color: var(--danger-color);
+}
+
+.meter-status {
+    color: var(--success-color);
+}
+
+.meter-status.offline {
     color: var(--danger-color);
 }
 
@@ -1006,6 +1037,124 @@ select.form-control {
 .toast-close:hover {
     color: var(--gray-700);
 }
+
+
+
+
+
+/* Стили для графа маршрутов */
+.graph-container {
+    width: 100%;
+    height: 400px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    overflow: hidden;
+    position: relative;
+}
+
+.graph-canvas {
+    width: 100%;
+    height: 350px;
+}
+
+.graph-legend {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-top: 1px solid #ddd;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #666;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.legend-color.coordinator {
+    background-color: #ff6b6b;
+    border: 2px solid #ff3333;
+}
+
+.legend-color.router {
+    background-color: #4d96ff;
+    border: 2px solid #1a73e8;
+}
+
+.legend-color.end-device {
+    background-color: #6bcf7f;
+    border: 2px solid #2e7d32;
+}
+
+.graph-edge {
+    stroke: #888;
+    stroke-width: 2;
+    fill: none;
+}
+
+.arrowhead {
+    fill: #888;
+}
+
+.graph-node {
+    stroke-width: 2;
+    cursor: pointer;
+    transition: r 0.2s ease;
+}
+
+.graph-node:hover {
+    r: 25;
+}
+
+.graph-node-coordinator {
+    fill: #ff6b6b;
+    stroke: #ff3333;
+}
+
+.graph-node-router {
+    fill: #4d96ff;
+    stroke: #1a73e8;
+}
+
+.graph-node-end-device {
+    fill: #6bcf7f;
+    stroke: #2e7d32;
+}
+
+.graph-node-label {
+    font-family: 'Roboto', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    fill: #333;
+    pointer-events: none;
+}
+
+.graph-tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    pointer-events: none;
+    z-index: 1000;
+    white-space: nowrap;
+}
+
+
+
+
+
 
 /* Screens */
 .screen {

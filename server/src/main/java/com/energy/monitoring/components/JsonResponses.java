@@ -135,7 +135,7 @@ public class JsonResponses {
                         "\"status\":\""     + status    + "\"," +
                         "\"created_at\":\"" + cteatedAt + "\"," +
                         "\"last_seen\":\""  + lastSeen  + "\"" +
-                   "},\"meters\":[\"";
+                   "},\"meters\":[";
     }
     public static String formingMiddleOfGetCoordinatorResponse(int meterId, String meterName, String meterZbLongAddr, short meterZbShortAddr, String meterStatus, Timestamp meterCreatedAt, Timestamp meterLastSeen) {
         return "{" +
@@ -169,7 +169,7 @@ public class JsonResponses {
                         "\"status\":\""     + status    + "\"," +
                         "\"created_at\":\"" + cteatedAt + "\"," +
                         "\"last_seen\":\""  + lastSeen  + "\"" +
-                   "},\"meters\":[\"";
+                   "},\"meters\":[";
     }
     public static String formingMiddleOfConnectionToCoordinatorResponse(int meterId, String meterName, String meterZbLongAddr, short meterZbShortAddr, String meterStatus, Timestamp meterCreatedAt, Timestamp meterLastSeen) {
         return "{" +
@@ -190,11 +190,26 @@ public class JsonResponses {
         }
     }
 
-    public static String formingCoordinatorCommandSuccessResponse(int coordinatorId, byte commandCode, byte[] commandParams) {
-        return "{\"success\":true,\"data\":{" +
-                    "\"id\":"                   + coordinatorId + "," +
-                    "\"command_code\":\""       + commandCode   + "\"," +
-                    "\"command_parameters\":\"" + commandParams + "\"" +
+    public static String formingCoordinatorCommandSuccessResponse(int coordinatorId, String commandCode, String commandParams) {
+        return "{\"success\":true,\"data\":{"  +
+                    "\"id\":"                   + coordinatorId  + ","   +
+                    "\"command_code\":\""       + commandCode    + "\"," +
+                    "\"command_parameters\":\"" + commandParams  + "\""  +
                 "}}";
     }
+
+    public static String formingGetMeterDataSuccessResponse(Double voltage, Double current, Double activePower, Double reactivePower, 
+                                                            Double apparentPower, Double powerFactor, Double frequency, Double neutralCurrent) {
+        return "{\"success\":true,\"data\":{" +
+                    "\"voltage\":"         + voltage        + "," +
+                    "\"current\":"         + current        + "," +
+                    "\"active_power\":"    + activePower    + "," +
+                    "\"reactive_power\":"  + reactivePower  + "," +
+                    "\"apparent_power\":"  + apparentPower  + "," +
+                    "\"power_factor\":"    + powerFactor    + "," +
+                    "\"frequency\":"       + frequency      + "," +
+                    "\"neutral_current\":" + neutralCurrent + 
+                "}}";
+    }
+
 }

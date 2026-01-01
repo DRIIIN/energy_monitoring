@@ -1,7 +1,10 @@
+/* Класс с методами обработки действий с координаторами */
 class CoordinatorHandler {
-    constructor(pageHandler) {
-        this.pageHandler  = pageHandler;
-        this.numberCoords = null;
+    constructor(pageHandler, routTableHandler, metetHandler) {
+        this.pageHandler       = pageHandler;
+        this.routTableHandler  = routTableHandler;
+        this.metetHandler      = metetHandler;
+        this.numberCoords      = null;
     }
 
     // Добавляет к строке html блок с разметкой об информации о координаторе coordinator и возвращает её
@@ -32,29 +35,31 @@ class CoordinatorHandler {
 
     // Добавляет к строке html блок с разметкой об информации о приборе учёта meter и возвращает её
     addedMeterToPage(html, meter) {
+        // console.log(meter);
         return html + `
             <div class="meter-item-block" id="meter${meter.id}">
                 <div class="meter"></div>
-                <div class="meter-info">
-                    <p><strong>Имя:                  </strong><text class="meter-name      ${meter.status}" id="meter-name${meter.id}      "> ${meter.name}                               </text></p>
-                    <p><strong>Long-адрес:           </strong><text class="meter-mac       ${meter.status}" id="meter-long-addr${meter.id} "> ${meter.zb_long_addr}                       </text></p>
-                    <p><strong>Short-адрес:          </strong><text class="meter-addr      ${meter.status}" id="meter-short-addr${meter.id}"> 0x${meter.zb_short_addr}                    </text></p>
-                    <p><strong>Статус:               </strong><text class="meter-status    ${meter.status}" id="meter-status${meter.id}    "> ${meter.status=='online'?'online':'offline'}</text></p>
-                    <p><strong>Создан:               </strong><text class="meter-create-at ${meter.status}" id="meter-create-at${meter.id} "> ${meter.created_at}                         </text></p>
-                    <p><strong>Последняя активность: </strong><text class="meter-last-seen ${meter.status}" id="meter-last-seen${meter.id} "> ${meter.last_seen}                          </text></p>
+                <div class="meter-info">   
+                    <p><strong>Имя:                  </strong><text class="meter-name      ${meter.status}" id="meter-name${meter.id}">       ${meter.name}                               </text></p>
+                    <p><strong>Long-адрес:           </strong><text class="meter-mac       ${meter.status}" id="meter-long-addr${meter.id}">  ${meter.zb_long_addr}                       </text></p>
+                    <p><strong>Short-адрес:          </strong><text class="meter-addr      ${meter.status}" id="meter-short-addr${meter.id}"> 0x${meter.zb_short_addr.toString(16).toUpperCase().padStart(4, '0')}                    </text></p>
+                    <p><strong>Статус:               </strong><text class="meter-status    ${meter.status}" id="meter-status${meter.id}">     ${meter.status=='online'?'online':'offline'}</text></p>
+                    <p><strong>Создан:               </strong><text class="meter-create-at ${meter.status}" id="meter-create-at${meter.id}">  ${meter.created_at}                         </text></p>
+                    <p><strong>Последняя активность: </strong><text class="meter-last-seen ${meter.status}" id="meter-last-seen${meter.id}">  ${meter.last_seen}                          </text></p>
                 </div>
-                <div class="meter-data">
-                    <p><strong>Напряжение (В):             </strong><text class="meter-voltage         ${meter.status}" id="meter-voltage${meter.id}         "> ${meter.voltage}        </text></p>
-                    <p><strong>Ток (A):                    </strong><text class="meter-current         ${meter.status}" id="meter-current${meter.id}         "> ${meter.current}        </text></p>
-                    <p><strong>Мощность активная (кВт):    </strong><text class="meter-active-power    ${meter.status}" id="meter-active-power${meter.id}    "> ${meter.active_power}   </text></p>
-                    <p><strong>Мощность реактивная (кВар): </strong><text class="meter-reactive-power  ${meter.status}" id="meter-reactive-power${meter.id}  "> ${meter.reactive_power} </text></p>
-                    <p><strong>Мощность (кВ*А):            </strong><text class="meter-apparent-power  ${meter.status}" id="meter-apparent-power${meter.id}  "> ${meter.apparent_power} </text></p>
-                    <p><strong>Коэффициент мощности (-):   </strong><text class="meter-power-factor    ${meter.status}" id="meter-power-factor${meter.id}    "> ${meter.power_factor}   </text></p>
-                    <p><strong>Частота (Гц):               </strong><text class="meter-frequency       ${meter.status}" id="meter-frequency${meter.id}       "> ${meter.frequency}      </text></p>
-                    <p><strong>Ток нулевого провода (A):   </strong><text class="meter-neutral-current ${meter.status}" id="meter-neutral-current${meter.id} "> ${meter.neutral_current}</text></p>
-                </div>
+                <table class="meter-data">
+
+                    <tr><td>Напряжение (В):             </td><td class="meter-voltage         ${meter.status}" id="meter-voltage${meter.id}">         ${meter.voltage}        </td></tr>
+                    <tr><td>Ток (A):                    </td><td class="meter-current         ${meter.status}" id="meter-current${meter.id}">         ${meter.current}        </td></tr>
+                    <tr><td>Мощность активная (кВт):    </td><td class="meter-active-power    ${meter.status}" id="meter-active-power${meter.id}">    ${meter.active_power}   </td></tr>
+                    <tr><td>Мощность реактивная (кВар): </td><td class="meter-reactive-power  ${meter.status}" id="meter-reactive-power${meter.id}">  ${meter.reactive_power} </td></tr>
+                    <tr><td>Мощность (кВ*А):            </td><td class="meter-apparent-power  ${meter.status}" id="meter-apparent-power${meter.id}">  ${meter.apparent_power} </td></tr>
+                    <tr><td>Коэффициент мощности (-):   </td><td class="meter-power-factor    ${meter.status}" id="meter-power-factor${meter.id}">    ${meter.power_factor}   </td></tr>
+                    <tr><td>Частота (Гц):               </td><td class="meter-frequency       ${meter.status}" id="meter-frequency${meter.id}">       ${meter.frequency}      </td></tr>
+                    <tr><td>Ток нулевого провода (A):   </td><td class="meter-neutral-current ${meter.status}" id="meter-neutral-current${meter.id}"> ${meter.neutral_current}</td></tr>
+                </table>
                 <div class="meter-actions">
-                    <button class="btn menu-item meter-action button-seen" id="buttonSeen${meter.id}">
+                    <button type="button" class="btn menu-item meter-action button-seen" id="buttonSeen${meter.id}">
                         <i class="fas fa-plug"></i>
                     </button>
                 </div>
@@ -84,6 +89,7 @@ class CoordinatorHandler {
         infoButtons.forEach(button => {
             button.addEventListener('click', async () => {
                 await this.getCordinatorDetails(button.id.replace('buttonInfo', ''));
+                this.routTableHandler.clear();
                 this.pageHandler.showCoordinatorInfo();
             });
         });
@@ -94,7 +100,7 @@ class CoordinatorHandler {
         const seenButtons = document.querySelectorAll('.button-seen');
         seenButtons.forEach(button => {
             button.addEventListener('click', async () => {
-                console.log("asked metter")
+                await this.metetHandler.getMeterDetails(button.id.replace('buttonSeen', ''));
             });
         });
     }
@@ -200,7 +206,8 @@ class CoordinatorHandler {
 
                 return true;
             } else {
-                this.pageHandler.showMessage(response.message || 'Сеть не доступна', 'error');
+                this.pageHandler.showMessage('Сеть не доступна', 'error');
+                await this.getUserCoordinators();
             
                 return false
             }
@@ -261,7 +268,21 @@ class CoordinatorHandler {
             const response = await CoordinatorAPI.sendCommand(coordinatorId, commandCode, parameters);
             this.pageHandler.showMessage('Ответ получен', 'success');
             if (response.success) {
-                console.log(response);
+                // console.log(response);
+                document.getElementById("coordinatorResponse").innerHTML = `<textarea>${response.data.command_parameters}</textarea>`;
+                this.pageHandler.showCoordinatorInfo();
+
+                if (response.data.command_code == "A2") {
+                    var routeData = [];
+                    const numberOfNodes = parseInt(response.data.command_parameters.slice(0, 2), 16);
+                    for (let i = 0; i < numberOfNodes; i++) {
+                        const nodeAddress    = "0x" + response.data.command_parameters.slice(2 * (2 + i * 8), 2 * (3 + i * 8)) + response.data.command_parameters.slice(2 * (1 + i * 8), 2 * (2 + i * 8));
+                        const nextHopAddress = "0x" + response.data.command_parameters.slice(2 * (4 + i * 8), 2 * (5 + i * 8)) + response.data.command_parameters.slice(2 * (3 + i * 8), 2 * (4 + i * 8));
+                        routeData.push([nodeAddress, nextHopAddress]);
+                    }
+                    
+                    this.routTableHandler.setRoutesData(routeData);
+                }
 
                 return true;
             } else {

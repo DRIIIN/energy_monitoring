@@ -23,6 +23,7 @@ import com.energy.monitoring.components.HttpStatusCodes;
 import com.energy.monitoring.components.JsonResponses;
 import com.energy.monitoring.controllers.AuthController;
 import com.energy.monitoring.controllers.CoordinatorController;
+import com.energy.monitoring.controllers.MeterController;
 import com.energy.monitoring.models.HttpRequest;
 import com.energy.monitoring.models.HttpResponse;
 
@@ -124,6 +125,8 @@ public class HttpHandler implements Runnable {
         } else 
         if (path.startsWith(EndPoints.COORDINATORS)) {
             return CoordinatorController.handleRequest(request);
+        } if (path.startsWith(EndPoints.METER)) {
+            return MeterController.handleRequest(request);
         } else {
             return HttpResponse.notFound(JsonResponses.formingUniversalResponse(false, "Endpoint not found"));
         }

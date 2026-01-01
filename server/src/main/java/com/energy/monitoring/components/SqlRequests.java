@@ -52,9 +52,9 @@ public class SqlRequests {
     public class Meter {
         public static final String CREATE_METER              =   "INSERT INTO " + DataBaseFildNames.TableNames.METERS            + " (" 
                                                                                 + DataBaseFildNames.Tables.Meter.COORDINATOR_ID  + ", " 
-                                                                                + DataBaseFildNames.Tables.Meter.NAME            + ", " 
                                                                                 + DataBaseFildNames.Tables.Meter.ZB_LONG_ADDR    + ", " 
                                                                                 + DataBaseFildNames.Tables.Meter.ZB_SHORT_ADDR   + ", " 
+                                                                                + DataBaseFildNames.Tables.Meter.NAME            + ", " 
                                                                                 + DataBaseFildNames.Tables.Meter.STATUS          + ") VALUES (?, ?, ?, ?, ?)";
 
         public static final String GET_METERS_BY_COORDINATOR = "SELECT * FROM " + DataBaseFildNames.TableNames.METERS            + " WHERE " 

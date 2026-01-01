@@ -1,10 +1,10 @@
 package com.energy.monitoring.controllers;
 
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.energy.monitoring.components.CoordinatorCommands;
 import com.energy.monitoring.components.HttpConstructions;
 import com.energy.monitoring.components.HttpConstructions.ContentTypes;
 import com.energy.monitoring.components.HttpConstructions.DeviseStatuses;
@@ -166,12 +166,12 @@ public class CoordinatorController {
                 for (int i = 0; i < meters.size(); i++) {
                     Meter meter = meters.get(i);
 
-                    response += JsonResponses.formingMiddleOfGetUserCoordinatorsResponse(meter.getId(), meter.getName(), coordinator.getMac(), meter.getZbLongAddr(), 
-                                                                                         meter.getZbShortAddr(), meter.getStatus(), meter.getCreatedAt(), meter.getLastSeen());
+                    response += JsonResponses.formingMiddleOfGetCoordinatorResponse(meter.getId(), meter.getName(), meter.getZbLongAddr(), meter.getZbShortAddr(), 
+                                                                                    meter.getStatus(), meter.getCreatedAt(), meter.getLastSeen());
                 }
                 response = JsonResponses.formingEndOfGetCoordinatorResponse(response);
                 // logger.info("Response: {}", response);
-
+                // System.out.println(response);
                 return HttpResponse.ok(response, ContentTypes.JSON);
             }
         } catch (SQLException e) {
@@ -185,7 +185,6 @@ public class CoordinatorController {
             CoordinatorDAO coordinatorDAO = new CoordinatorDAO();
             Coordinator    coordinator    = coordinatorDAO.getCoordinator(coordinatorId);
             boolean        connected      = checkConnectionToCoordinatorOnUart(coordinator.getMac());
-
             if (!coordinatorDAO.coordinatorBelongsToUser(coordinatorId, userId)) {
                 return HttpResponse.unauthorized(JsonResponses.formingUniversalResponse(false, "Access denied"));
             } else
@@ -207,8 +206,8 @@ public class CoordinatorController {
                 
                 return HttpResponse.ok(response, ContentTypes.JSON);
             } else {
-                coordinatorDAO.updateCoordinatorStatus(coordinatorId, DeviseStatuses.ERROR);
-                return HttpResponse.error(HttpStatusCodes.SERVICE_UNAVAILABLE, JsonResponses.formingUniversalResponse(false, "Failed to connect to coordinator"));
+                coordinatorDAO.updateCoordinatorStatus(coordinatorId, DeviseStatuses.OFFLINE);
+                return HttpResponse.ok(JsonResponses.formingUniversalResponse(false, "Failed to connect to coordinator"), ContentTypes.JSON);
             }
             
         } catch (SQLException e) {
@@ -220,9 +219,7 @@ public class CoordinatorController {
     private static boolean checkConnectionToCoordinatorOnUart(String macAddress) {
         try {
             Thread.sleep(1000);
-
             String portName = UartUtil.getCommPortByMacAddress(macAddress);
-            
             return portName != null;
 
         } catch (InterruptedException e) {
@@ -248,37 +245,73 @@ public class CoordinatorController {
         }
     }
 
-    // Возвращает строку string в виде набота байт
-    private static byte[] convertStringToBytes(String string) {
-        // logger.info("len: {}", string.length());
-        int len = string.length();
-        if (len > 0 && len % 2 == 0) {
-            byte[] bytes = new byte[len / 2];
-            for (int i = 0; i < len; i += 2) {
-                bytes[i / 2] = (byte) Integer.parseInt(string.substring(i, i + 2), 16);
-            }
-
-            return bytes;
+    // Возвращает 16-битное число из строки shortAddr, в коророй записаны два байта в 16-ричном виде в обратном порятке байт
+    private static short convertShortZbAddrFromStringToShort(String shortAddr) {
+        if (shortAddr == null || shortAddr.length() != 4) {
+            return 0;
         } else {
-            return null;
+            int value = Integer.parseInt(shortAddr, 16);
+            return (short) ((value << 8) | ((value >> 8) & 0xFF));
         }
     }
 
     // Формирует ответ на http-запрос отправки команды координатору с id coordinatorId
     private static HttpResponse handlerCommandToCoordinator(HttpRequest request, int coordinatorId) {
         try {
-            String body          = request.getBody();
-            byte commandCode     = convertStringToBytes(JsonResponses.extractFromJson(body, JsonBlocks.COMMAND))[0];
-            String commandParams = JsonResponses.extractFromJson(body, JsonBlocks.PARAMETERS);
-            byte[] byteParameters = commandParams != null && commandParams.length() > 0 ? convertStringToBytes(commandParams) : null;
+            String body           = request.getBody();
+            String commandCode    = JsonResponses.extractFromJson(body, JsonBlocks.COMMAND);
+            String commandParams  = JsonResponses.extractFromJson(body, JsonBlocks.PARAMETERS);
 
             CoordinatorDAO coordinatorDAO = new CoordinatorDAO();
             Coordinator    coordinator    = coordinatorDAO.getCoordinator(coordinatorId);
             String         macAddress     = coordinator.getMac();
 
-            byte[] response = UartUtil.sendCommandToCoordinator(macAddress, commandCode, byteParameters);
-            
-            return HttpResponse.ok(JsonResponses.formingCoordinatorCommandSuccessResponse(coordinatorId, response[0], Arrays.copyOfRange(response, 1, response.length)), ContentTypes.JSON);
+            String response = UartUtil.sendCommandToCoordinator(macAddress, commandCode, commandParams);
+            String respCommandCode   = response.substring(0, 2);
+            String respCommandParams = response.substring(2, response.length());
+
+            if (UartUtil.convertStringToBytes(respCommandCode)[0] == CoordinatorCommands.Codes.DISCOVER_NETWORK) {
+                MeterDAO    meterDAO = new MeterDAO();
+                List<Meter> meters   = meterDAO.getMetersByCoordinator(coordinatorId);
+                int numberOfCoordMeters = meters.size();
+
+                int numberOfResposeMeters = respCommandParams.length() / (2 * CoordinatorCommands.PayloadSizes.DISCOVER_NETWORK);
+                // System.out.println(numberOfResposeMeters);
+                
+                for (Meter meter : meters) {
+                    meter.setStatus(DeviseStatuses.OFFLINE);
+                }
+
+                for (int r = 0; r < numberOfResposeMeters; r++) {
+                    boolean isKnownMeter = false;
+                    String knownMeterZbLongAddr;
+                    String respMeterZbLongAddr = respCommandParams.substring(2 * (CoordinatorCommands.PayloadSizes.DISCOVER_NETWORK * r), 
+                                                                             2 * (8 + CoordinatorCommands.PayloadSizes.DISCOVER_NETWORK * r));
+                    for (int k = 0; k < numberOfCoordMeters; k++) {
+                        knownMeterZbLongAddr = meters.get(k).getZbLongAddr();
+                        if (knownMeterZbLongAddr.equals(respMeterZbLongAddr)) {
+                            meters.get(k).setStatus(DeviseStatuses.ONLINE);
+                            isKnownMeter = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!isKnownMeter) {
+                        String respMeterZbShortAddr = respCommandParams.substring(2 * (8  + CoordinatorCommands.PayloadSizes.DISCOVER_NETWORK * r), 
+                                                                                  2 * (10 + CoordinatorCommands.PayloadSizes.DISCOVER_NETWORK * r));
+                        short  respMeterZbShortAddrInShort = convertShortZbAddrFromStringToShort(respMeterZbShortAddr);
+                        String respMeterName = "Meter_0x" + respMeterZbShortAddr.substring(2, 4) + respMeterZbShortAddr.substring(0, 2);
+                        // System.out.println(coordinatorId + " " + respMeterZbLongAddr + " " + respMeterZbShortAddrInShort + " " + respMeterName);
+                        meterDAO.createMeter(coordinatorId, respMeterZbLongAddr, respMeterZbShortAddrInShort, respMeterName);
+                        
+                    }
+                }
+            } //else
+            // if (UartUtil.convertStringToBytes(respCommandCode)[0] == CoordinatorCommands.Codes.GET_ROUTE_TABLE) {
+            //     respCommandParams = "0802000100000000000100010000000000030003000000000004000400000000000500040000000000060005000000000007000400000000000800040000000000";
+            // }
+
+            return HttpResponse.ok(JsonResponses.formingCoordinatorCommandSuccessResponse(coordinatorId, respCommandCode, respCommandParams), ContentTypes.JSON);
         } catch (SQLException e) {
             return HttpResponse.error(HttpStatusCodes.INTERNAL_SERVER_ERROR, JsonResponses.formingUniversalResponse(false, "Database error: " + e.getMessage()));
         }

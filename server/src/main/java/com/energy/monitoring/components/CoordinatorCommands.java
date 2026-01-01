@@ -43,6 +43,7 @@ public class CoordinatorCommands {
         public static final byte LAUNCH_BOOTLOADER     = (byte)0x1A;
         public static final byte UPLOAD_BOOTLOADER     = (byte)0x1B;
         public static final byte RECREATE_NETWORK_EX   = (byte)0x23;
+        public static final byte GET_ROUTE_TABLE       = (byte)0xA2;
         public static final byte SINK_COMMAND_MYRMIDON = (byte)0xAB;
         public static final byte SET_BEBUG_CONFIG      = (byte)0xDB;
         public static final byte CLOSE_SESSION         = (byte)0xFF;
@@ -62,10 +63,15 @@ public class CoordinatorCommands {
         public static final String LAUNCH_BOOTLOADER     = "Загрузка обновления для узла";
         public static final String UPLOAD_BOOTLOADER     = "Отправка обновления узлу";
         public static final String RECREATE_NETWORK_EX   = "Пересоздание сети на заданном канале";
+        public static final String GET_ROUTE_TABLE       = "Получение тааблицы маршрутов в сети";
         public static final String SINK_COMMAND_MYRMIDON = "Отправка ПИРС-запросов";
         public static final String SET_BEBUG_CONFIG      = "Установка отладочного режима";
         public static final String CLOSE_SESSION         = "Закрытие сессии";
 
         public static final String UNKNOWN               = "Unknown command";
+    }
+
+    public class PayloadSizes {
+        public static final int DISCOVER_NETWORK = 13;
     }
 }

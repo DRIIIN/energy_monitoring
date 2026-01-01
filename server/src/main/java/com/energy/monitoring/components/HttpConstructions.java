@@ -21,6 +21,8 @@ public class HttpConstructions {
         public static final String COORDINATOR     = "/api/coordinators/";
         public static final String CONNECT         = "/connect";
         public static final String COMMAND         = "/command";
+
+        public static final String METER         = "/api/meters/";
     }
 
     public class Methods {
