@@ -1,0 +1,153 @@
+/* Адаптивные стили */
+@media (max-width: 770px) {
+    .login-card {
+        padding: var(--spacing-lg);
+        margin: var(--spacing-md);
+    }
+    
+    .app-header {
+        padding: 0 var(--spacing-md);
+        height: 56px;
+    }
+    
+    .user-menu-button .user-info {
+        display: none;
+    }
+    
+    .user-menu-button i:last-child {
+        display: none;
+    }
+    
+    .app-content {
+        padding: var(--spacing-md);
+    }
+    
+    .card-body {
+        padding: var(--spacing-lg);
+    }
+    
+    .coordinator-item-block {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        text-align: center;
+    }
+    
+    .coordinator-info p {
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+    }
+    
+    .coordinator-info strong {
+        min-width: auto;
+        margin-bottom: var(--spacing-xs);
+    }
+    
+    .coordinator-actions {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .user-profile-info p {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+    }
+    
+    .user-profile-info strong {
+        min-width: auto;
+        margin-bottom: var(--spacing-xs);
+    }
+    
+    .toast-container {
+        left: var(--spacing-md);
+        right: var(--spacing-md);
+        bottom: var(--spacing-md);
+    }
+    
+    .modal-content {
+        padding: var(--spacing-lg);
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --font-size-xl: 1.125rem;
+        --font-size-lg: 1rem;
+        --spacing-xl: 1.5rem;
+    }
+    
+    .login-card {
+        padding: var(--spacing-md);
+    }
+    
+    h1 {
+        font-size: var(--font-size-lg);
+    }
+    
+    .btn-lg {
+        padding: 0.875rem 1.5rem;
+        font-size: var(--font-size-base);
+    }
+    
+    .app-content {
+        padding: var(--spacing-sm);
+    }
+    
+    .card-body {
+        padding: var(--spacing-md);
+    }
+    
+    .coordinator-info-block p,
+    .meter-info p {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .coordinator-info-block strong,
+    .meter-info strong {
+        min-width: auto;
+        margin-bottom: var(--spacing-xs);
+    }
+    
+    .meter-data td {
+        display: block;
+        width: 100%;
+        padding: var(--spacing-xs) 0;
+    }
+    
+    .meter-data td:first-child {
+        font-weight: 600;
+        color: var(--color-text);
+    }
+    
+    .meter-data td:last-child {
+        text-align: left;
+        margin-bottom: var(--spacing-sm);
+        color: var(--color-text-light);
+    }
+}
+
+@media (min-width: 1200px) {
+    .app-content {
+        padding: var(--spacing-xl);
+    }
+}
+
+@media print {
+    .app-header,
+    .user-menu-dropdown,
+    .toast-container {
+        display: none !important;
+    }
+    
+    .app-content {
+        padding: 0;
+    }
+    
+    .card {
+        border: none;
+        box-shadow: none;
+        page-break-inside: avoid;
+    }
+}

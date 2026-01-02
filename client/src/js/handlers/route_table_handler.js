@@ -29,7 +29,7 @@ class RouteTableHandler {
             this.nodes.set(address, {
                 x: 0,
                 y: 0,
-                radius: 25
+                radius: 45
             });
         }
     }
@@ -49,13 +49,13 @@ class RouteTableHandler {
     }
 
     calculatePositions() {
-        const canvasWidth  = this.canvas.clientWidth || 600;
+        const canvasWidth  = this.canvas.width || 600;
         
         const coordinator = this.nodes.get(this.coordinatorAddress);
         if (coordinator) {
             coordinator.x      = canvasWidth / 2;
-            coordinator.y      = 50;
-            coordinator.radius = 30; 
+            coordinator.y      = 70;
+            coordinator.radius = 55; 
         }
 
         const levels = this.calculateLevels();
@@ -66,8 +66,8 @@ class RouteTableHandler {
             levelNodes.forEach((nodeAddress, nodeIndex) => {
                 const node = this.nodes.get(nodeAddress);
                 if (node) {
-                    node.x = 100 + nodeIndex * ((canvasWidth - 50) / Math.max(1, levelNodes.length - 1));
-                    node.y = 100 + levelIndex * 80;;
+                    node.x = 50 + nodeIndex * ((canvasWidth - 100) / Math.max(1, levelNodes.length - 1));
+                    node.y = 200 + levelIndex * 120;;
                 }
             });
         });
@@ -181,14 +181,14 @@ class RouteTableHandler {
         });
 
         this.nodes.forEach((node, address) => {
-            let fillColor = address == this.coordinatorAddress ? "#4d96ff" : "#ff6b6b";
+            let fillColor = address == this.coordinatorAddress ? "#557cda" : "#ffffff";
             
             const circle = document.createElementNS(svgNS, "circle");
             circle.setAttribute("cx", node.x);
             circle.setAttribute("cy", node.y - 5);
             circle.setAttribute("r",  node.radius);
             circle.setAttribute("fill", fillColor);
-            circle.setAttribute("stroke", fillColor == "#ff6b6b" ? "#ff3333" : "#1a73e8");
+            circle.setAttribute("stroke", "#557cda");
             circle.setAttribute("stroke-width", "2");
             svg.appendChild(circle);
 
@@ -196,10 +196,9 @@ class RouteTableHandler {
             text.setAttribute("x", node.x);
             text.setAttribute("y", node.y);
             text.setAttribute("text-anchor", "middle");
-            text.setAttribute("font-family", "Roboto, sans-serif");
             text.setAttribute("font-size", "14px");
-            text.setAttribute("font-weight", "500");
-            text.setAttribute("fill", "#333");
+            text.setAttribute("font-weight", "bold");
+            text.setAttribute("fill", fillColor == "#557cda" ? "#ffffff" : "#557cda");
             text.textContent = address;
             svg.appendChild(text);
         });
