@@ -12,8 +12,9 @@ import com.energy.monitoring.database.JDBC;
 import com.energy.monitoring.models.User;
 import com.energy.monitoring.utils.PasswordHasher;
 
-/* Методы для взаимодействия с тааблицей пользователей */
+/* Методы для взаимодействия с таблицей пользователей */
 public class UserDAO {
+    // Отправляет sql-запрос базе данных на создание в таблице пользователей нового объекта с заданными параметрами
     public User createUser(String login, String password) throws SQLException {
         String sql = SqlRequests.User.CREATE_USER;
         
@@ -44,6 +45,7 @@ public class UserDAO {
         }
     }
     
+    // Отправляет sql-запрос базе данных на получение из таблицы пользователей объекта с заданным логином и сверяет пароли
     public User authenticate(String login, String password) throws SQLException {
         String sql = SqlRequests.User.AUTENTIFICATE;
         
@@ -69,6 +71,7 @@ public class UserDAO {
         return null;
     }
     
+    // Отправляет sql-запрос базе данных на получение из таблицы пользователей количества объектов с заданным логином
     public boolean userExists(String login) throws SQLException {
         String sql = SqlRequests.User.USER_EXISTS;
         
@@ -86,6 +89,7 @@ public class UserDAO {
         return false;
     }
     
+    // Отправляет sql-запрос базе данных на изменение в таблице пользователей статуса объектов с заданным userId на true
     public void activateUser(int userId) throws SQLException {
         String sql = SqlRequests.User.ACTIVATE_USER;
         
@@ -97,6 +101,7 @@ public class UserDAO {
         }
     }
     
+    // Отправляет sql-запрос базе данных на изменение в таблице пользователей статуса объектов с заданным userId на false
     public void deactivateUser(int userId) throws SQLException {
         String sql = SqlRequests.User.DEACTIVATE_USER;
         

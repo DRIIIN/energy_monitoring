@@ -3,6 +3,7 @@ package com.energy.monitoring.components;
 import java.util.HashMap;
 import java.util.Map;
 
+/* Константные значения для формирования команд координаторам */
 public class CoordinatorCommands {
     private static final Map<Integer, String> COMMAND_NAMES = new HashMap<>();
     

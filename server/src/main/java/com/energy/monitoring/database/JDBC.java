@@ -14,9 +14,9 @@ import org.slf4j.LoggerFactory;
 public class JDBC {
     private static final Logger logger = LoggerFactory.getLogger(JDBC.class); // Объект Logger для текущего класса
 
-    private static String url;
-    private static String user;
-    private static String password;
+    private static String url;      // Ссылка для доступа к базе данных
+    private static String user;     // Пользоветель базы данных
+    private static String password; // Пароль пользователя
     
     static {
         try {
@@ -38,6 +38,7 @@ public class JDBC {
         JDBC.password = password;
     }
     
+    // Возвращает объект Connection текущего соединения с базой данных
     public static Connection getConnection() throws SQLException {
         Properties props = new Properties();
         props.setProperty("user",     user);
@@ -46,6 +47,7 @@ public class JDBC {
         return DriverManager.getConnection(url, props);
     }
     
+    // Закрывает соединение connection с базой данных
     public static void closeConnection(Connection connection) {
         if (connection != null) {
             try {
@@ -58,6 +60,7 @@ public class JDBC {
         }
     }
     
+    // Останавливает текущее соединение с базой данных
     public static void closeResources(ResultSet rs, Statement stmt, Connection conn) {
         try {
             if (rs != null) {

@@ -9,22 +9,20 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.energy.monitoring.components.DataBaseFildNames;
 import com.energy.monitoring.components.SqlRequests;
 import com.energy.monitoring.database.JDBC;
 import com.energy.monitoring.models.Coordinator;
 
-/* Методы для взаимодействия с тааблицей координаторов */
+/* Методы для взаимодействия с таблицей координаторов */
 public class CoordinatorDAO {
-    private static final Logger logger = LoggerFactory.getLogger(CoordinatorDAO.class);  // Объект Logger для текущего класса
+    // private static final Logger logger = LoggerFactory.getLogger(CoordinatorDAO.class);  // Объект Logger для текущего класса
 
+    // Отправляет sql-запрос базе данных на добавления в таблицу координаторов нового объекта с заданными параметрами
     public Coordinator createCoordinator(int userId, String name, String mac, String ip, int port) throws SQLException {
         String sql = SqlRequests.Coordinator.CREATE_COORDINATOR;
         
-        logger.info("{}, {}", ip, port);
+        // logger.info("{}, {}", ip, port);
 
         try (Connection connection = JDBC.getConnection();
             PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -60,7 +58,8 @@ public class CoordinatorDAO {
             }
         }
     }
-    
+
+    // Отправляет sql-запрос базе данных на получение из таблицы координаторов всех объектаот с заданным userId
     public List<Coordinator> getUserCoordinators(int userId) throws SQLException {
         String sql = SqlRequests.Coordinator.GET_USER_COORDINATORS;
         List<Coordinator> coordinators = new ArrayList<>();
@@ -90,6 +89,7 @@ public class CoordinatorDAO {
         return coordinators;
     }
     
+    // Отправляет sql-запрос базе данных на получение из таблицы координаторов бъекта с заданным coordinatorId
     public Coordinator getCoordinator(int coordinatorId) throws SQLException {
         String sql = SqlRequests.Coordinator.GET_COORDINATOR;
         
@@ -120,6 +120,7 @@ public class CoordinatorDAO {
         return null;
     }
     
+    // Отправляет sql-запрос базе данных на обновление в таблице координаторов статуса объекта с заданным coordinatorId
     public void updateCoordinatorStatus(int coordinatorId, String status) throws SQLException {
         String sql = SqlRequests.Coordinator.UPDATE_COORDINATOR_STATUS;
         
@@ -133,7 +134,8 @@ public class CoordinatorDAO {
             stmt.executeUpdate();
         }
     }
-    
+
+    // Отправляет sql-запрос базе данных на удаление из таблицы координаторов объекта с заданным coordinatorId
     public void deleteCoordinator(int coordinatorId) throws SQLException {
         String sql = SqlRequests.Coordinator.DELETE_COORDINATOR;
         
@@ -145,6 +147,7 @@ public class CoordinatorDAO {
         }
     }
     
+    // Отправляет sql-запрос базе данных на проверку userId в таблице координаторов объекта с заданным coordinatorId
     public boolean coordinatorBelongsToUser(int coordinatorId, int userId) throws SQLException {
         String sql = SqlRequests.Coordinator.COORDINATORS_BELONGS_TO_USER;
         

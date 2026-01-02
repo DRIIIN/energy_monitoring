@@ -14,8 +14,9 @@ import com.energy.monitoring.components.SqlRequests;
 import com.energy.monitoring.database.JDBC;
 import com.energy.monitoring.models.Meter;
 
-/* Методы для взаимодействия с тааблицей приборов учёта */
+/* Методы для взаимодействия с таблицей приборов учёта */
 public class MeterDAO {
+    // Отправляет sql-запрос базе данных на создание в таблице приборов учёта обыекта с заданными параметрами
     public Meter createMeter(int coordinatorId, String zbLongAddr, short zbShortAddr, String name) throws SQLException {
         String sql = SqlRequests.Meter.CREATE_METER;
 
@@ -52,6 +53,7 @@ public class MeterDAO {
         }
     }    
 
+    // Отправляет sql-запрос базе данных на получение из таблицы приборов учёта всех объекта с заданным coordinatorId
     public List<Meter> getMetersByCoordinator(int coordinatorId) throws SQLException {
         String sql = SqlRequests.Meter.GET_METERS_BY_COORDINATOR;
         List<Meter> meters = new ArrayList<>();
@@ -88,6 +90,7 @@ public class MeterDAO {
         return meters;
     }
 
+    // Отправляет sql-запрос базе данных на получение из таблицы приборов учёта объекта с заданным meterId
     public Meter getMeter(int meterId) throws SQLException {
         String sql = SqlRequests.Meter.GET_METER;
         
@@ -122,6 +125,7 @@ public class MeterDAO {
         return null;
     }
     
+    // Отправляет sql-запрос базе данных на обновление в таблице приборов учёта показаний объекта с заданным meterId
     public void updateMeterData(int meterId, double voltage, double current, double activePower, double reactivePower, 
                                 double apparentPower, double powerFactor, double frequency, double neutralCurrent) throws SQLException {
         String sql = SqlRequests.Meter.UPDATE_METER_DATA;
@@ -144,6 +148,7 @@ public class MeterDAO {
         }
     }
 
+    // Отправляет sql-запрос базе данных на обновление в таблице приборов учёта статуса объекта с заданным meterId
     public void updateMeterStatus(int meterId, String status) throws SQLException {
         String sql = SqlRequests.Meter.UPDATE_METER_STATUS;
         
@@ -158,6 +163,7 @@ public class MeterDAO {
         }
     }
     
+    // Отправляет sql-запрос базе данных на удаление из таблицы приборов учёта объекта с заданным meterId
     public void deleteMeter(int meterId) throws SQLException {
         String sql = SqlRequests.Meter.DELETE_METER;
         

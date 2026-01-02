@@ -1,6 +1,6 @@
 package com.energy.monitoring.components;
 
-/* Константные конструкции обращений к таблицам базы данных */
+/* Константные конструкции sql-запросов */
 public class SqlRequests {
     public class User {
         public static final String CREATE_USER     =                   "INSERT INTO " + DataBaseFildNames.TableNames.USERS      + " (" 

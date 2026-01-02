@@ -1,3 +1,4 @@
+/* Класс с методами для отрисовки графа топологии сети */
 class RouteTableHandler {
     constructor() {
         this.containerId        = "routeMap";
@@ -8,7 +9,7 @@ class RouteTableHandler {
         this.coordinatorAddress = '0x0000';
     }
 
-
+    // ФФормирует набор точек на основе адресов routesData
     setRoutesData(routesData) {
         if (routesData == null || routesData.length == 0) {
             return;
@@ -24,6 +25,7 @@ class RouteTableHandler {
         this.render();
     }
 
+    // Добавляет узел с заданным адрессом address
     addNode(address) {
         if (!this.nodes.has(address)) {
             this.nodes.set(address, {
@@ -34,6 +36,7 @@ class RouteTableHandler {
         }
     }
 
+    // Добавляет ребро между узлами с адресами sourse и target
     addEdge(source, target) {
         if (source != target) {
             this.edges.push({
@@ -48,6 +51,7 @@ class RouteTableHandler {
         }
     }
 
+    // Позиционирует узлы на схеме
     calculatePositions() {
         const canvasWidth  = this.canvas.width || 600;
         
@@ -73,6 +77,7 @@ class RouteTableHandler {
         });
     }
 
+    // Разбивает узлы на уровни родства с координатором
     calculateLevels() {
         const levels = { '1': [] };
         this.edges.forEach(edge => {
@@ -116,6 +121,7 @@ class RouteTableHandler {
         return levels;
     }
 
+    // Возвращаает true, если узел с адресом nodeAddress уже есть в levels, иначе - false
     isInAnyLevel(nodeAddress, levels) {
         if (nodeAddress == this.coordinatorAddress) {
             return true;
@@ -129,6 +135,7 @@ class RouteTableHandler {
         }
     }
 
+    // Размещает все элементы графа на канвасе
     render() {
         if (!this.canvas) {
             this.container.innerHTML = `<div class="graph-canvas" id="${this.containerId}_canvas"></div>`;
@@ -207,6 +214,7 @@ class RouteTableHandler {
         this.canvas.appendChild(svg);
     }
 
+    // Очищает созданный граф
     clear() {
         this.canvas             = null;
         this.nodes              = new Map();

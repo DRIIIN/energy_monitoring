@@ -31,12 +31,14 @@ import com.energy.monitoring.models.HttpResponse;
 public class HttpHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(HttpHandler.class); // Объект Logger для текущего класса
     
-    private final Socket clientSocket;
+    private final Socket clientSocket; // Сокет текущего клиента
     
+    // Записывает сокет socket текущего клиента
     public HttpHandler(Socket socket) {
         this.clientSocket = socket;
     }
     
+    // Отлавливает http-запросы, обрабатывает и отправляет на них ответ
     @Override
     public void run() {
         try (BufferedReader reader = new BufferedReader(
@@ -105,6 +107,7 @@ public class HttpHandler implements Runnable {
         }
     }
     
+    // Перенаплавляет запрос request в другие обработчики
     private HttpResponse routeRequest(HttpRequest request) {
         String path   = request.getPath();
         String method = request.getMethod();
@@ -191,6 +194,7 @@ public class HttpHandler implements Runnable {
         }
     }
     
+    // Формирует и тправляет http-ответ 
     private void sendResponse(PrintWriter writer, HttpResponse response, String origin) {
         writer.printf("HTTP/1.1 %d %s\r\n",     response.getStatusCode(), response.getStatusMessage());
         writer.printf("Content-Type: %s\r\n",   response.getContentType());
@@ -218,6 +222,7 @@ public class HttpHandler implements Runnable {
         }
     }
     
+    // Формирует и отправляет http-ответ с ошибкой
     private void sendError(PrintWriter writer, int statusCode, String message) {
         writer.printf ("HTTP/1.1 %d %s\r\n", statusCode, message);
         writer.println("Content-Type: text/plain; charset=utf-8");
